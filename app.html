@@ -1,0 +1,3173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#09090f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="description"
+    content="Free-to-play narrative prediction markets. Earn chips by watching ads — never buy with real money.">
+  <title>WagerTale — Free Narrative Prediction Markets</title>
+  <link rel="manifest"
+    href='data:application/manifest+json,{"name":"WagerTale","short_name":"WagerTale","start_url":".","display":"standalone","background_color":"%2309090f","theme_color":"%2309090f","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%2309090f%22/><circle cx=%2250%22 cy=%2250%22 r=%2220%22 fill=%22%2300d26a%22/></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
+  <style>
+    :root {
+      --bg: #09090f;
+      --bg2: #111119;
+      --bg3: #191924;
+      --bg4: #22222f;
+      --brd: #252535;
+      --brd2: #333348;
+      --tx: #e8e8f0;
+      --tx2: #9898b0;
+      --tx3: #606078;
+      --yes: #00d26a;
+      --yes2: rgba(0, 210, 106, .12);
+      --yes3: rgba(0, 210, 106, .25);
+      --no: #ff4466;
+      --no2: rgba(255, 68, 102, .12);
+      --no3: rgba(255, 68, 102, .25);
+      --acc: #5b8def;
+      --acc2: rgba(91, 141, 239, .15);
+      --gold: #f0b800;
+      --gold2: rgba(240, 184, 0, .12);
+      --purple: #a855f7;
+      --purple2: rgba(168, 85, 247, .12);
+      --r: 10px;
+      --rl: 14px;
+      --tap: 44px;
+      --sb: env(safe-area-inset-bottom, 0px);
+      --st: env(safe-area-inset-top, 0px)
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      * {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important
+      }
+
+      .ot-t,
+      .ticker-track {
+        animation: none !important
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--tx);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit
+    }
+
+    input {
+      font-family: inherit
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(8px + var(--st)) 12px 8px;
+      border-bottom: 1px solid var(--brd);
+      background: var(--bg);
+      z-index: 10;
+      flex-shrink: 0;
+      gap: 6px
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 14px;
+      flex-shrink: 0
+    }
+
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--yes);
+      box-shadow: 0 0 8px var(--yes);
+      animation: pulse 2s ease-in-out infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .4
+      }
+    }
+
+    .ftp {
+      background: var(--yes2);
+      color: var(--yes);
+      font-size: 8px;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 4px;
+      letter-spacing: .5px;
+      border: 1px solid rgba(0, 210, 106, .3)
+    }
+
+    .bal-area {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0
+    }
+
+    .bal-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      padding: 5px 6px 5px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums
+    }
+
+    .earn-btn {
+      background: linear-gradient(135deg, var(--yes), #00a854);
+      color: #000;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      border: none;
+      position: relative
+    }
+
+    .earn-btn::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 2px solid var(--yes);
+      opacity: .4;
+      animation: ep 2s ease-in-out infinite
+    }
+
+    @keyframes ep {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: .4
+      }
+
+      50% {
+        transform: scale(1.15);
+        opacity: 0
+      }
+    }
+
+    .streak-b {
+      background: linear-gradient(135deg, var(--gold), #ff8800);
+      color: #000;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 10px
+    }
+
+    .top-icons {
+      display: flex;
+      gap: 4px;
+      align-items: center
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--tx2)
+    }
+
+    .ot {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--brd);
+      padding: 6px 0;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative
+    }
+
+    .ot::before,
+    .ot::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 24px;
+      z-index: 2;
+      pointer-events: none
+    }
+
+    .ot::before {
+      left: 0;
+      background: linear-gradient(90deg, var(--bg2), transparent)
+    }
+
+    .ot::after {
+      right: 0;
+      background: linear-gradient(270deg, var(--bg2), transparent)
+    }
+
+    .ot-t {
+      display: flex;
+      gap: 20px;
+      animation: otS 40s linear infinite;
+      white-space: nowrap;
+      padding-left: 100%
+    }
+
+    .ot-i {
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--tx2)
+    }
+
+    .ot-i .ot-tt {
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--tx);
+      font-weight: 600
+    }
+
+    .ot-i .ot-p {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums
+    }
+
+    .ot-i .ot-a {
+      font-size: 10px;
+      font-weight: 800
+    }
+
+    .ot-i .ot-a.up {
+      color: var(--yes)
+    }
+
+    .ot-i .ot-a.down {
+      color: var(--no)
+    }
+
+    @keyframes otS {
+      from {
+        transform: translateX(0)
+      }
+
+      to {
+        transform: translateX(-100%)
+      }
+    }
+
+    .views {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch
+    }
+
+    .view {
+      display: none;
+      min-height: 100%
+    }
+
+    .view.active {
+      display: block
+    }
+
+    .btabs {
+      display: flex;
+      border-top: 1px solid var(--brd);
+      background: var(--bg2);
+      flex-shrink: 0;
+      padding-bottom: var(--sb)
+    }
+
+    .btab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px 0 4px;
+      color: var(--tx3);
+      font-size: 9px;
+      font-weight: 600;
+      gap: 2px;
+      position: relative;
+      min-height: var(--tap)
+    }
+
+    .btab.active {
+      color: var(--acc)
+    }
+
+    .btab .bi {
+      font-size: 18px;
+      line-height: 1
+    }
+
+    .btab .badge {
+      position: absolute;
+      top: 2px;
+      right: calc(50% - 16px);
+      background: var(--no);
+      color: #fff;
+      font-size: 8px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 8px;
+      min-width: 14px;
+      text-align: center
+    }
+
+    .search-wrap {
+      padding: 10px 16px 4px
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      padding: 0 12px;
+      gap: 8px
+    }
+
+    .search-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--tx);
+      font-size: 13px;
+      padding: 10px 0;
+      outline: none
+    }
+
+    .search-box input::placeholder {
+      color: var(--tx3)
+    }
+
+    .cat-strip {
+      display: flex;
+      gap: 6px;
+      padding: 8px 16px;
+      overflow-x: auto;
+      scrollbar-width: none
+    }
+
+    .cat-strip::-webkit-scrollbar {
+      display: none
+    }
+
+    .cat-pill {
+      padding: 6px 12px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: 16px;
+      color: var(--tx2);
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0
+    }
+
+    .cat-pill.active {
+      background: var(--tx);
+      color: var(--bg);
+      border-color: var(--tx)
+    }
+
+    .sponsored {
+      margin: 8px 16px;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(240, 184, 0, .08), rgba(255, 136, 0, .08));
+      border: 1px solid rgba(240, 184, 0, .3);
+      border-radius: var(--rl);
+      position: relative;
+      cursor: pointer
+    }
+
+    .sponsored::after {
+      content: 'SPONSORED · 2× PAYOUT';
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--gold);
+      background: var(--gold2);
+      padding: 2px 6px;
+      border-radius: 4px
+    }
+
+    .sponsored .sp-brand {
+      font-size: 10px;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: .5px
+    }
+
+    .sponsored .sp-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      padding-right: 110px
+    }
+
+    .sponsored .sp-desc {
+      font-size: 11px;
+      color: var(--tx2);
+      line-height: 1.4;
+      margin-bottom: 10px
+    }
+
+    .native-ad {
+      margin: 8px 16px;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(91, 141, 239, .08), rgba(168, 85, 247, .08));
+      border: 1px solid rgba(91, 141, 239, .2);
+      border-radius: var(--rl);
+      position: relative;
+      cursor: pointer
+    }
+
+    .native-ad::after {
+      content: 'AD · WATCH TO EARN';
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      color: var(--acc);
+      background: var(--acc2);
+      padding: 2px 6px;
+      border-radius: 4px
+    }
+
+    .native-ad .na-t {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px
+    }
+
+    .native-ad .na-d {
+      font-size: 11px;
+      color: var(--tx2);
+      line-height: 1.4;
+      margin-bottom: 8px
+    }
+
+    .native-ad .na-c {
+      display: inline-block;
+      padding: 6px 14px;
+      background: var(--acc);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700
+    }
+
+    .featured {
+      margin: 8px 16px 14px;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--bg3), var(--bg4));
+      border: 1px solid var(--brd2);
+      border-radius: var(--rl);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer
+    }
+
+    .featured::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, var(--acc2), transparent);
+      border-radius: 50%
+    }
+
+    .feat-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--gold);
+      margin-bottom: 6px
+    }
+
+    .feat-title {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      position: relative
+    }
+
+    .feat-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--tx2);
+      position: relative
+    }
+
+    .feat-prices {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      position: relative
+    }
+
+    .price-chip {
+      flex: 1;
+      padding: 10px;
+      border-radius: var(--r);
+      text-align: center
+    }
+
+    .price-chip.yes {
+      background: var(--yes2);
+      border: 1px solid rgba(0, 210, 106, .25)
+    }
+
+    .price-chip.no {
+      background: var(--no2);
+      border: 1px solid rgba(255, 68, 102, .25)
+    }
+
+    .price-chip .pl {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px
+    }
+
+    .price-chip.yes .pl {
+      color: var(--yes)
+    }
+
+    .price-chip.no .pl {
+      color: var(--no)
+    }
+
+    .price-chip .pv {
+      font-size: 22px;
+      font-weight: 800;
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums
+    }
+
+    .price-chip.yes .pv {
+      color: var(--yes)
+    }
+
+    .price-chip.no .pv {
+      color: var(--no)
+    }
+
+    .sec-title {
+      padding: 4px 16px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: var(--tx3);
+      text-transform: uppercase
+    }
+
+    .mkt-list {
+      padding: 0 16px 20px
+    }
+
+    .mkt-row {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--brd);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer
+    }
+
+    .mkt-row:last-child {
+      border-bottom: none
+    }
+
+    .mkt-star {
+      font-size: 16px;
+      color: var(--tx3);
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .mkt-star.on {
+      color: var(--gold)
+    }
+
+    .mkt-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .mkt-title {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical
+    }
+
+    .mkt-sub {
+      font-size: 10px;
+      color: var(--tx3);
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .mkt-sub .dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--tx3)
+    }
+
+    .mkt-spark {
+      width: 52px;
+      height: 24px;
+      flex-shrink: 0
+    }
+
+    .mkt-price {
+      text-align: right;
+      min-width: 56px;
+      flex-shrink: 0
+    }
+
+    .mkt-price .mp {
+      font-size: 15px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums
+    }
+
+    .mkt-price .ml {
+      font-size: 9px;
+      color: var(--tx3);
+      font-weight: 600
+    }
+
+    .mkt-price .arrow {
+      font-size: 10px;
+      font-weight: 800;
+      margin-left: 2px
+    }
+
+    .mkt-price .arrow.up {
+      color: var(--yes)
+    }
+
+    .mkt-price .arrow.down {
+      color: var(--no)
+    }
+
+    .flash-up {
+      animation: flashUp .6s ease
+    }
+
+    .flash-down {
+      animation: flashDown .6s ease
+    }
+
+    @keyframes flashUp {
+      0% {
+        color: var(--yes);
+        text-shadow: 0 0 8px var(--yes)
+      }
+
+      100% {
+        text-shadow: none
+      }
+    }
+
+    @keyframes flashDown {
+      0% {
+        color: var(--no);
+        text-shadow: 0 0 8px var(--no)
+      }
+
+      100% {
+        text-shadow: none
+      }
+    }
+
+    .utag {
+      display: inline-block;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      margin-left: 3px;
+      vertical-align: middle
+    }
+
+    .utag.alpha {
+      background: var(--acc2);
+      color: var(--acc)
+    }
+
+    .utag.beta {
+      background: var(--purple2);
+      color: var(--purple)
+    }
+
+    .utag.gamma {
+      background: var(--gold2);
+      color: var(--gold)
+    }
+
+    .vol-badge {
+      display: inline-block;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      margin-left: 3px
+    }
+
+    .vol-badge.low {
+      background: var(--yes2);
+      color: var(--yes)
+    }
+
+    .vol-badge.med {
+      background: var(--gold2);
+      color: var(--gold)
+    }
+
+    .vol-badge.high {
+      background: var(--no2);
+      color: var(--no)
+    }
+
+    .det-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--brd)
+    }
+
+    .back-btn {
+      color: var(--acc);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .det-cat {
+      font-size: 10px;
+      color: var(--tx2);
+      font-weight: 600;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 4px
+    }
+
+    .det-title {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px
+    }
+
+    .det-desc {
+      font-size: 12px;
+      color: var(--tx2);
+      line-height: 1.5;
+      margin-bottom: 10px
+    }
+
+    .det-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--tx2);
+      flex-wrap: wrap
+    }
+
+    .det-meta b {
+      color: var(--tx);
+      font-weight: 600
+    }
+
+    .det-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--brd);
+      background: var(--bg2)
+    }
+
+    .det-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--tx3);
+      border-bottom: 2px solid transparent
+    }
+
+    .det-tab.active {
+      color: var(--tx);
+      border-bottom-color: var(--acc)
+    }
+
+    .det-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px
+    }
+
+    .det-action {
+      flex: 1;
+      padding: 10px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      color: var(--tx2);
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px
+    }
+
+    .sentiment {
+      margin: 12px 16px;
+      padding: 12px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r)
+    }
+
+    .sentiment .s-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      margin-bottom: 8px
+    }
+
+    .sentiment .s-yes {
+      color: var(--yes);
+      font-weight: 700
+    }
+
+    .sentiment .s-no {
+      color: var(--no);
+      font-weight: 700
+    }
+
+    .sentiment .s-bar {
+      height: 8px;
+      background: var(--no);
+      border-radius: 4px;
+      overflow: hidden
+    }
+
+    .sentiment .s-fill {
+      height: 100%;
+      background: var(--yes);
+      transition: width .5s;
+      border-radius: 4px
+    }
+
+    .sentiment .s-traders {
+      font-size: 10px;
+      color: var(--tx3);
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between
+    }
+
+    .sentiment .s-traders b {
+      color: var(--tx)
+    }
+
+    .orderbook {
+      margin: 12px 16px;
+      padding: 12px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r)
+    }
+
+    .ob-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--tx3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between
+    }
+
+    .ob-spread {
+      text-align: center;
+      font-size: 11px;
+      color: var(--tx2);
+      margin-bottom: 8px;
+      padding: 4px;
+      background: var(--bg);
+      border-radius: 4px
+    }
+
+    .ob-spread b {
+      color: var(--tx);
+      font-weight: 700
+    }
+
+    .ob-row {
+      display: flex;
+      align-items: center;
+      font-size: 11px;
+      padding: 3px 0;
+      position: relative;
+      font-variant-numeric: tabular-nums
+    }
+
+    .ob-row .ob-bg {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border-radius: 2px;
+      opacity: .2
+    }
+
+    .ob-row.bid .ob-bg {
+      background: var(--yes);
+      right: 0
+    }
+
+    .ob-row.ask .ob-bg {
+      background: var(--no);
+      left: 0
+    }
+
+    .ob-row .ob-p {
+      flex: 1;
+      font-weight: 700;
+      position: relative;
+      z-index: 1
+    }
+
+    .ob-row.bid .ob-p {
+      color: var(--yes)
+    }
+
+    .ob-row.ask .ob-p {
+      color: var(--no)
+    }
+
+    .ob-row .ob-v {
+      flex: 1;
+      text-align: right;
+      color: var(--tx2);
+      position: relative;
+      z-index: 1
+    }
+
+    .ob-divider {
+      height: 1px;
+      background: var(--brd);
+      margin: 6px 0
+    }
+
+    .live-chat {
+      margin: 12px 16px;
+      padding: 12px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      max-height: 160px;
+      overflow-y: auto
+    }
+
+    .lc-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--tx3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px
+    }
+
+    .lc-msg {
+      font-size: 11px;
+      color: var(--tx2);
+      padding: 3px 0;
+      line-height: 1.4
+    }
+
+    .lc-msg b {
+      color: var(--tx);
+      font-weight: 600
+    }
+
+    .lc-msg .lc-yes {
+      color: var(--yes);
+      font-weight: 700
+    }
+
+    .lc-msg .lc-no {
+      color: var(--no);
+      font-weight: 700
+    }
+
+    .chart-wrap {
+      padding: 16px;
+      border-bottom: 1px solid var(--brd)
+    }
+
+    .outcome-row {
+      display: flex;
+      padding: 12px 16px;
+      gap: 8px;
+      border-bottom: 1px solid var(--brd);
+      flex-wrap: wrap
+    }
+
+    .out-card {
+      flex: 1;
+      min-width: calc(50% - 8px);
+      padding: 14px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      text-align: center
+    }
+
+    .out-card.yes {
+      background: var(--yes2)
+    }
+
+    .out-card.no {
+      background: var(--no2)
+    }
+
+    .out-card.sel.yes {
+      border-color: var(--yes);
+      background: var(--yes3)
+    }
+
+    .out-card.sel.no {
+      border-color: var(--no);
+      background: var(--no3)
+    }
+
+    .out-card .ol {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px
+    }
+
+    .out-card.yes .ol {
+      color: var(--yes)
+    }
+
+    .out-card.no .ol {
+      color: var(--no)
+    }
+
+    .out-card .op {
+      font-size: 24px;
+      font-weight: 800;
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums
+    }
+
+    .out-card .os {
+      font-size: 10px;
+      color: var(--tx2);
+      margin-top: 2px
+    }
+
+    .resolved-banner {
+      padding: 14px 16px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 14px
+    }
+
+    .resolved-banner.yes {
+      background: var(--yes2);
+      color: var(--yes)
+    }
+
+    .resolved-banner.no {
+      background: var(--no2);
+      color: var(--no)
+    }
+
+    .betslip {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(52px + var(--sb));
+      background: var(--bg2);
+      border-top: 1px solid var(--brd2);
+      padding: 16px;
+      transform: translateY(110%);
+      transition: transform .3s cubic-bezier(.32, .72, 0, 1);
+      z-index: 20;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -8px 30px rgba(0, 0, 0, .6);
+      max-height: 70vh;
+      overflow-y: auto
+    }
+
+    .betslip.open {
+      transform: translateY(0)
+    }
+
+    .slip-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--brd2);
+      border-radius: 2px;
+      margin: 0 auto 12px
+    }
+
+    .slip-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px
+    }
+
+    .slip-title {
+      font-size: 15px;
+      font-weight: 700
+    }
+
+    .slip-close {
+      color: var(--tx3);
+      font-size: 20px;
+      padding: 4px
+    }
+
+    .slip-mkt {
+      font-size: 11px;
+      color: var(--tx2);
+      margin-bottom: 12px;
+      line-height: 1.4
+    }
+
+    .amt-input {
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      padding: 4px;
+      margin: 10px 0
+    }
+
+    .amt-input .pfx {
+      padding: 0 10px;
+      color: var(--tx2);
+      font-weight: 700;
+      font-size: 16px
+    }
+
+    .amt-input input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--tx);
+      font-size: 20px;
+      font-weight: 700;
+      padding: 10px 0;
+      outline: none;
+      font-variant-numeric: tabular-nums
+    }
+
+    .quick-amts {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px
+    }
+
+    .qa {
+      flex: 1;
+      padding: 8px;
+      background: var(--bg);
+      border: 1px solid var(--brd);
+      border-radius: 8px;
+      color: var(--tx2);
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center
+    }
+
+    .slip-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 5px 0
+    }
+
+    .slip-row .k {
+      color: var(--tx2)
+    }
+
+    .slip-row .v {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums
+    }
+
+    .slip-row .v.profit {
+      color: var(--yes)
+    }
+
+    .slip-row .v.kelly {
+      color: var(--gold)
+    }
+
+    .slip-divider {
+      height: 1px;
+      background: var(--brd);
+      margin: 8px 0
+    }
+
+    .sub-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: var(--r);
+      font-weight: 700;
+      font-size: 15px;
+      margin-top: 10px
+    }
+
+    .sub-btn:disabled {
+      opacity: .3;
+      cursor: not-allowed
+    }
+
+    .sub-btn.yes-btn {
+      background: var(--yes);
+      color: #000
+    }
+
+    .sub-btn.no-btn {
+      background: var(--no);
+      color: #fff
+    }
+
+    .undo-toast {
+      position: absolute;
+      bottom: calc(60px + var(--sb));
+      left: 16px;
+      right: 16px;
+      background: var(--bg3);
+      border: 1px solid var(--brd2);
+      border-radius: var(--r);
+      padding: 12px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 25;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .5)
+    }
+
+    .undo-toast.show {
+      display: flex
+    }
+
+    .undo-toast .ut-text {
+      flex: 1;
+      font-size: 12px;
+      font-weight: 600
+    }
+
+    .undo-toast .ut-btn {
+      padding: 6px 14px;
+      background: var(--no);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700
+    }
+
+    .undo-toast .ut-timer {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--tx2)
+    }
+
+    .pnl-card {
+      margin: 16px;
+      padding: 18px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--rl);
+      text-align: center
+    }
+
+    .pnl-label {
+      font-size: 10px;
+      color: var(--tx3);
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase
+    }
+
+    .pnl-val {
+      font-size: 32px;
+      font-weight: 800;
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums
+    }
+
+    .pnl-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--brd)
+    }
+
+    .pnl-stat .n {
+      font-size: 16px;
+      font-weight: 700
+    }
+
+    .pnl-stat .l {
+      font-size: 10px;
+      color: var(--tx3);
+      margin-top: 2px
+    }
+
+    .pos-sec {
+      padding: 0 16px 20px
+    }
+
+    .pos-sub {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--tx3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin: 14px 0 8px
+    }
+
+    .pos {
+      padding: 12px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      margin-bottom: 8px;
+      cursor: pointer
+    }
+
+    .pos-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+      gap: 8px
+    }
+
+    .pos-title {
+      font-size: 12px;
+      font-weight: 600;
+      flex: 1;
+      line-height: 1.3
+    }
+
+    .pos-side {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      flex-shrink: 0
+    }
+
+    .pos-side.yes {
+      background: var(--yes2);
+      color: var(--yes)
+    }
+
+    .pos-side.no {
+      background: var(--no2);
+      color: var(--no)
+    }
+
+    .pos-bot {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--tx2);
+      align-items: center;
+      gap: 6px
+    }
+
+    .pos-bot .pnl {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums
+    }
+
+    .pos-pnl-bar {
+      height: 3px;
+      background: var(--bg);
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden
+    }
+
+    .pos-pnl-fill {
+      height: 100%;
+      border-radius: 2px
+    }
+
+    .pos-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px
+    }
+
+    .pos-btn {
+      flex: 1;
+      padding: 6px;
+      background: var(--bg4);
+      border: 1px solid var(--brd2);
+      border-radius: 6px;
+      color: var(--tx);
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center
+    }
+
+    .pos-btn.cashout {
+      background: var(--yes2);
+      border-color: rgba(0, 210, 106, .3);
+      color: var(--yes)
+    }
+
+    .pos-btn.cashout .co-mult {
+      font-size: 9px;
+      opacity: .8
+    }
+
+    .hist-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--brd);
+      display: flex;
+      gap: 10px;
+      align-items: center
+    }
+
+    .hist-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0
+    }
+
+    .hist-icon.win {
+      background: var(--yes2);
+      border: 1px solid var(--yes)
+    }
+
+    .hist-icon.lose {
+      background: var(--no2);
+      border: 1px solid var(--no)
+    }
+
+    .hist-icon.open {
+      background: var(--acc2);
+      border: 1px solid var(--acc)
+    }
+
+    .hist-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .hist-title {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .hist-sub {
+      font-size: 10px;
+      color: var(--tx3)
+    }
+
+    .hist-amt {
+      font-size: 13px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      text-align: right
+    }
+
+    .hist-amt.win {
+      color: var(--yes)
+    }
+
+    .hist-amt.lose {
+      color: var(--no)
+    }
+
+    .hist-amt.open {
+      color: var(--acc)
+    }
+
+    .lb-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--brd);
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .lb-rank {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+      background: var(--bg3);
+      color: var(--tx2)
+    }
+
+    .lb-rank.gold {
+      background: linear-gradient(135deg, #ffd700, #ff8800);
+      color: #000
+    }
+
+    .lb-rank.silver {
+      background: linear-gradient(135deg, #c0c0c0, #808080);
+      color: #000
+    }
+
+    .lb-rank.bronze {
+      background: linear-gradient(135deg, #cd7f32, #8b4513);
+      color: #fff
+    }
+
+    .lb-rank.me {
+      background: var(--acc);
+      color: #fff
+    }
+
+    .lb-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .lb-name {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 2px
+    }
+
+    .lb-stats {
+      font-size: 10px;
+      color: var(--tx3)
+    }
+
+    .lb-pnl {
+      font-size: 13px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      text-align: right
+    }
+
+    .lb-pnl.pos {
+      color: var(--yes)
+    }
+
+    .lb-pnl.neg {
+      color: var(--no)
+    }
+
+    .story-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--brd);
+      background: var(--bg2);
+      position: sticky;
+      top: 0;
+      z-index: 5
+    }
+
+    .story-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--tx3);
+      border-bottom: 2px solid transparent
+    }
+
+    .story-tab.active {
+      color: var(--tx);
+      border-bottom-color: var(--gold)
+    }
+
+    .story-summary {
+      margin: 16px;
+      padding: 16px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--rl)
+    }
+
+    .story-summary h3 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--gold)
+    }
+
+    .story-summary p {
+      font-size: 12px;
+      color: var(--tx2);
+      line-height: 1.6;
+      font-style: italic
+    }
+
+    .world-sec {
+      padding: 16px
+    }
+
+    .world-block {
+      margin-bottom: 20px
+    }
+
+    .world-block h4 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--tx3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 10px
+    }
+
+    .faction-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--brd)
+    }
+
+    .faction-row:last-child {
+      border-bottom: none
+    }
+
+    .f-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .f-name {
+      flex: 1;
+      font-size: 12px;
+      font-weight: 600
+    }
+
+    .f-bar {
+      flex: 2;
+      height: 6px;
+      background: var(--bg);
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .f-fill {
+      height: 100%;
+      transition: width .5s
+    }
+
+    .f-val {
+      font-size: 11px;
+      font-weight: 700;
+      width: 32px;
+      text-align: right
+    }
+
+    .f-status {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px
+    }
+
+    .f-status.dominant {
+      background: var(--yes2);
+      color: var(--yes)
+    }
+
+    .f-status.weakened {
+      background: var(--gold2);
+      color: var(--gold)
+    }
+
+    .f-status.critical {
+      background: var(--no2);
+      color: var(--no)
+    }
+
+    .timeline {
+      padding: 0 16px 20px
+    }
+
+    .tl-item {
+      display: flex;
+      gap: 12px;
+      padding-bottom: 16px;
+      position: relative
+    }
+
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 32px;
+      bottom: 0;
+      width: 2px;
+      background: var(--brd)
+    }
+
+    .tl-item:last-child::before {
+      display: none
+    }
+
+    .tl-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      z-index: 1
+    }
+
+    .tl-dot.yes {
+      background: var(--yes2);
+      border: 2px solid var(--yes)
+    }
+
+    .tl-dot.no {
+      background: var(--no2);
+      border: 2px solid var(--no)
+    }
+
+    .tl-content {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      padding: 12px
+    }
+
+    .tl-ep {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--tx3);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between
+    }
+
+    .tl-text {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--tx);
+      margin-bottom: 4px
+    }
+
+    .tl-result {
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    .tl-result.yes {
+      color: var(--yes)
+    }
+
+    .tl-result.no {
+      color: var(--no)
+    }
+
+    .tl-journal {
+      margin-top: 8px;
+      padding: 8px;
+      background: var(--bg);
+      border-left: 2px solid var(--gold);
+      border-radius: 0 6px 6px 0;
+      font-size: 11px;
+      color: var(--tx2);
+      font-style: italic;
+      line-height: 1.5
+    }
+
+    .tl-journal .j-name {
+      font-style: normal;
+      font-weight: 700;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 2px;
+      font-size: 10px
+    }
+
+    .earn-hero {
+      margin: 16px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(0, 210, 106, .15), rgba(91, 141, 239, .15));
+      border: 1px solid rgba(0, 210, 106, .3);
+      border-radius: var(--rl);
+      text-align: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .earn-hero::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(0, 210, 106, .2), transparent);
+      border-radius: 50%
+    }
+
+    .earn-hero h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      position: relative
+    }
+
+    .earn-hero p {
+      font-size: 12px;
+      color: var(--tx2);
+      line-height: 1.5;
+      position: relative;
+      margin-bottom: 12px
+    }
+
+    .earn-hero .eh-free {
+      display: inline-block;
+      background: var(--yes);
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: .5px;
+      margin-bottom: 10px;
+      position: relative
+    }
+
+    .earn-methods {
+      padding: 0 16px 20px
+    }
+
+    .earn-method {
+      margin-bottom: 10px;
+      padding: 14px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden
+    }
+
+    .earn-method:active {
+      background: var(--bg4)
+    }
+
+    .earn-method .em-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0
+    }
+
+    .earn-method .em-icon.t1 {
+      background: var(--bg4)
+    }
+
+    .earn-method .em-icon.t2 {
+      background: var(--acc2)
+    }
+
+    .earn-method .em-icon.t3 {
+      background: var(--gold2)
+    }
+
+    .earn-method .em-icon.t4 {
+      background: var(--purple2)
+    }
+
+    .earn-method .em-icon.t5 {
+      background: var(--yes2)
+    }
+
+    .earn-method .em-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .earn-method .em-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .earn-method .em-desc {
+      font-size: 11px;
+      color: var(--tx2);
+      line-height: 1.4
+    }
+
+    .earn-method .em-reward {
+      text-align: right;
+      flex-shrink: 0
+    }
+
+    .earn-method .em-amt {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--yes);
+      font-variant-numeric: tabular-nums
+    }
+
+    .earn-method .em-time {
+      font-size: 10px;
+      color: var(--tx3);
+      margin-top: 2px
+    }
+
+    .earn-method .em-tag {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 2px 6px;
+      border-radius: 4px
+    }
+
+    .earn-method .em-tag.hot {
+      background: var(--no2);
+      color: var(--no)
+    }
+
+    .earn-method .em-tag.new {
+      background: var(--gold2);
+      color: var(--gold)
+    }
+
+    .earn-disclaimer {
+      margin: 16px;
+      padding: 12px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      font-size: 10px;
+      color: var(--tx3);
+      line-height: 1.5;
+      text-align: center
+    }
+
+    .earn-disclaimer b {
+      color: var(--tx2)
+    }
+
+    .modal-bg {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .8);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 30;
+      backdrop-filter: blur(4px)
+    }
+
+    .modal-bg.open {
+      display: flex
+    }
+
+    .modal {
+      background: var(--bg2);
+      border-top: 1px solid var(--brd2);
+      border-radius: 16px 16px 0 0;
+      padding: 20px 20px calc(20px + var(--sb));
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      max-height: 85vh;
+      overflow-y: auto
+    }
+
+    .modal h3 {
+      font-size: 17px;
+      margin-bottom: 6px
+    }
+
+    .modal p {
+      color: var(--tx2);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 12px
+    }
+
+    .modal .countdown {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--acc);
+      margin: 16px 0;
+      font-variant-numeric: tabular-nums
+    }
+
+    .modal button {
+      width: 100%;
+      padding: 14px;
+      background: var(--acc);
+      color: #fff;
+      border-radius: var(--r);
+      font-weight: 700;
+      font-size: 14px;
+      margin-top: 6px
+    }
+
+    .modal button:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    .modal button.secondary {
+      background: var(--bg4)
+    }
+
+    .modal button.danger {
+      background: var(--no)
+    }
+
+    .modal button.gold {
+      background: linear-gradient(135deg, var(--gold), #ff8800);
+      color: #000
+    }
+
+    .modal .ad-preview {
+      background: var(--bg);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      padding: 12px;
+      margin: 12px 0;
+      text-align: left;
+      font-size: 11px;
+      color: var(--tx2);
+      line-height: 1.5;
+      font-style: italic
+    }
+
+    .modal .reward-preview {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--yes);
+      margin: 8px 0
+    }
+
+    .modal .earn-notice {
+      background: var(--yes2);
+      border: 1px solid rgba(0, 210, 106, .3);
+      border-radius: var(--r);
+      padding: 10px;
+      margin: 12px 0;
+      font-size: 11px;
+      color: var(--yes);
+      line-height: 1.5;
+      text-align: left
+    }
+
+    .modal .earn-notice b {
+      color: var(--yes)
+    }
+
+    .interstitial {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center
+    }
+
+    .interstitial.show {
+      display: flex
+    }
+
+    .int-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--tx3);
+      margin-bottom: 16px
+    }
+
+    .int-content {
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--rl);
+      padding: 24px;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 20px
+    }
+
+    .int-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px
+    }
+
+    .int-desc {
+      font-size: 12px;
+      color: var(--tx2);
+      line-height: 1.5
+    }
+
+    .int-skip {
+      font-size: 12px;
+      color: var(--tx3);
+      margin-top: 8px
+    }
+
+    .playable {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      z-index: 55;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
+    }
+
+    .playable.show {
+      display: flex
+    }
+
+    .play-area {
+      width: 280px;
+      height: 360px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--rl);
+      position: relative;
+      overflow: hidden;
+      margin: 16px 0
+    }
+
+    .play-target {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--yes);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      animation: tp 1s ease-in-out infinite;
+      box-shadow: 0 0 20px var(--yes)
+    }
+
+    @keyframes tp {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.1)
+      }
+    }
+
+    .play-score {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 8px 0;
+      font-variant-numeric: tabular-nums;
+      color: var(--gold)
+    }
+
+    .play-timer {
+      font-size: 14px;
+      color: var(--tx2)
+    }
+
+    .res-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 45;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
+    }
+
+    .res-overlay.show {
+      display: flex
+    }
+
+    .res-bg {
+      position: absolute;
+      inset: 0
+    }
+
+    .res-bg.win {
+      background: radial-gradient(circle, rgba(0, 210, 106, .2), rgba(0, 0, 0, .9))
+    }
+
+    .res-bg.lose {
+      background: radial-gradient(circle, rgba(255, 68, 102, .15), rgba(0, 0, 0, .9))
+    }
+
+    .res-card {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 30px;
+      max-width: 300px
+    }
+
+    .res-icon {
+      font-size: 48px;
+      margin-bottom: 12px
+    }
+
+    .res-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px
+    }
+
+    .res-amt {
+      font-size: 36px;
+      font-weight: 800;
+      margin: 12px 0;
+      font-variant-numeric: tabular-nums
+    }
+
+    .res-mkt {
+      font-size: 12px;
+      color: var(--tx2);
+      margin-bottom: 20px;
+      line-height: 1.4
+    }
+
+    .res-card button {
+      padding: 14px 40px;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      color: var(--tx);
+      font-weight: 700;
+      font-size: 14px;
+      margin: 4px
+    }
+
+    .res-card button.gold {
+      background: linear-gradient(135deg, var(--gold), #ff8800);
+      color: #000;
+      border: none
+    }
+
+    .toast {
+      position: absolute;
+      top: calc(70px + var(--st));
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: var(--bg3);
+      border: 1px solid var(--brd2);
+      padding: 10px 18px;
+      border-radius: var(--r);
+      font-size: 12px;
+      font-weight: 600;
+      opacity: 0;
+      transition: all .25s;
+      z-index: 40;
+      pointer-events: none;
+      white-space: nowrap;
+      max-width: 90%
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0)
+    }
+
+    .toast.win {
+      border-color: var(--yes);
+      color: var(--yes)
+    }
+
+    .toast.lose {
+      border-color: var(--no);
+      color: var(--no)
+    }
+
+    .toast.ach {
+      border-color: var(--gold);
+      color: var(--gold)
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--tx3);
+      font-size: 13px
+    }
+
+    .lucky-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 12px 0
+    }
+
+    .lucky-card {
+      aspect-ratio: 1;
+      background: var(--bg3);
+      border: 1px solid var(--brd);
+      border-radius: var(--r);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all .3s
+    }
+
+    .lucky-card.flipped {
+      background: var(--gold2);
+      border-color: var(--gold)
+    }
+
+    .lucky-card .lc-val {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--gold)
+    }
+
+    .wheel-wrap {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      margin: 16px auto
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      position: relative;
+      transition: transform 4s cubic-bezier(.17, .67, .3, .99);
+      border: 4px solid var(--brd2)
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 20px solid var(--gold);
+      z-index: 2
+    }
+
+    .wheel-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 2px solid var(--brd2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      z-index: 3
+    }
+
+    .wheel-result {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 12px 0;
+      font-variant-numeric: tabular-nums
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--acc);
+      outline-offset: 2px
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-dot"></span>WagerTale <span class="ftp">FREE</span></div>
+      <div class="bal-area">
+        <div class="bal-pill"><span>$</span><span id="bal">1,000.00</span><span class="streak-b" id="streakB"
+            style="display:none">🔥0</span><button class="earn-btn" onclick="App.openEarn()"
+            aria-label="Earn chips">▶</button></div>
+        <button class="icon-btn" onclick="App.openSettings()" aria-label="Settings">⚙️</button>
+      </div>
+    </header>
+    <div class="ot">
+      <div class="ot-t" id="otT"></div>
+    </div>
+    <main class="views">
+      <section class="view active" id="v-markets"></section>
+      <section class="view" id="v-detail"></section>
+      <section class="view" id="v-earn"></section>
+      <section class="view" id="v-story"></section>
+      <section class="view" id="v-portfolio"></section>
+      <section class="view" id="v-history"></section>
+      <section class="view" id="v-leaders"></section>
+    </main>
+    <nav class="btabs">
+      <button class="btab active" data-v="markets"><span class="bi">📈</span>Markets</button>
+      <button class="btab" data-v="earn"><span class="bi">💰</span>Earn</button>
+      <button class="btab" data-v="story"><span class="bi">🌌</span>World</button>
+      <button class="btab" data-v="portfolio"><span class="bi">💼</span>Portfolio</button>
+      <button class="btab" data-v="history"><span class="bi">📜</span>History</button>
+    </nav>
+    <aside class="betslip" id="betslip"></aside>
+    <div class="undo-toast" id="undoToast"><span class="ut-text" id="utText">Bet placed</span><button class="ut-btn"
+        onclick="App.undoBet()">Undo</button><span class="ut-timer" id="utTimer">5</span></div>
+    <div class="modal-bg" id="modalBg">
+      <div class="modal" id="modalC"></div>
+    </div>
+    <div class="interstitial" id="interstitial"></div>
+    <div class="playable" id="playable"></div>
+    <div class="res-overlay" id="resOverlay"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+  <script>
+    'use strict';
+    // ============================================================
+    // CONFIG
+    // ============================================================
+    const C = { VER: '12.0.0', KEY: 'wt12', BAL: 1000, TICK: 2000, MAXM: 14, MINM: 10, MAXH: 50, TOAST: 2500, AD_CD: 20000, UNDO_SEC: 5 };
+    const U = {
+      fmt(n) { return '$' + n.toFixed(2) },
+      fmtB(n) { return n.toLocaleString('en-US', { maximumFractionDigits: 0 }) },
+      rc(a) { return a[ Math.floor(Math.random() * a.length) ] },
+      ri(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a },
+      uid(p = '') { return p + Math.random().toString(36).slice(2, 10) },
+      clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)) },
+      safe(fn, fb) { try { return fn() } catch (e) { console.error(e); return fb } },
+      debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms) } },
+      sanitize(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML }
+    };
+
+    // ============================================================
+    // WORLD DATA — Races, Nations, Universes, Characters
+    // ============================================================
+    const RACES = {
+      human: { name: 'Human', color: '#5b8def', traits: [ 'adaptable', 'ambitious' ], abilities: [ 'diplomacy', 'innovation' ] },
+      elf: { name: 'Elf', color: '#a855f7', traits: [ 'graceful', 'long-lived' ], abilities: [ 'arcane magic', 'archery' ] },
+      dwarf: { name: 'Dwarf', color: '#f0b800', traits: [ 'sturdy', 'craftsmen' ], abilities: [ 'mining', 'smithing' ] },
+      orc: { name: 'Orc', color: '#ff4466', traits: [ 'strong', 'honorable' ], abilities: [ 'combat', 'intimidation' ] },
+      android: { name: 'Android', color: '#00d26a', traits: [ 'logical', 'evolving' ], abilities: [ 'computation', 'strength' ] },
+      alien: { name: 'Alien', color: '#9898b0', traits: [ 'advanced', 'mysterious' ], abilities: [ 'telepathy', 'technology' ] },
+      fae: { name: 'Fae', color: '#e879f9', traits: [ 'mischievous', 'magical' ], abilities: [ 'illusion', 'trickery' ] },
+      dragon: { name: 'Dragon', color: '#f97316', traits: [ 'powerful', 'ancient' ], abilities: [ 'fire breath', 'flight' ] }
+    };
+    const UNIVERSES = {
+      alpha: { name: 'Universe Alpha', tag: 'α', cls: 'alpha', desc: 'Swords & sorcery realm', color: 'var(--acc)' },
+      beta: { name: 'Universe Beta', tag: 'β', cls: 'beta', desc: 'Cyberpunk reality', color: 'var(--purple)' },
+      gamma: { name: 'Universe Gamma', tag: 'γ', cls: 'gamma', desc: 'Steampunk chaos', color: 'var(--gold)' }
+    };
+    const NATIONS = {
+      'kingdom-of-valor': { name: 'Kingdom of Valor', color: '#5b8def', race: 'human', gov: 'monarchy' },
+      'iron-confederacy': { name: 'Iron Confederacy', color: '#f0b800', race: 'dwarf', gov: 'council' },
+      'shadow-empire': { name: 'Shadow Empire', color: '#ff4466', race: 'orc', gov: 'autocracy' },
+      'arcane-republic': { name: 'Arcane Republic', color: '#a855f7', race: 'elf', gov: 'meritocracy' },
+      'machine-collective': { name: 'Machine Collective', color: '#00d26a', race: 'android', gov: 'hive-mind' },
+      'stellar-concord': { name: 'Stellar Concord', color: '#9898b0', race: 'alien', gov: 'federation' }
+    };
+    const CAST = [
+      { id: 'mara', name: 'Detective Mara', race: 'human', nation: 'kingdom-of-valor', universe: 'alpha', alive: true, power: 7, mood: 60, psych: { align: 'lawful-good', mot: 'justice', fear: 'failure' } },
+      { id: 'rex', name: 'Captain Rex', race: 'human', nation: 'kingdom-of-valor', universe: 'alpha', alive: true, power: 8, mood: 50, psych: { align: 'lawful-neutral', mot: 'duty', fear: 'loss' } },
+      { id: 'vex', name: 'Lady Vex', race: 'elf', nation: 'arcane-republic', universe: 'alpha', alive: true, power: 6, mood: 70, psych: { align: 'neutral-good', mot: 'power', fear: 'irrelevance' } },
+      { id: 'kael', name: 'Kael the Rogue', race: 'orc', nation: 'shadow-empire', universe: 'alpha', alive: true, power: 5, mood: 55, psych: { align: 'chaotic-neutral', mot: 'freedom', fear: 'betrayal' } },
+      { id: 'aris', name: 'Dr. Aris Thorne', race: 'android', nation: 'machine-collective', universe: 'beta', alive: true, power: 4, mood: 65, psych: { align: 'true-neutral', mot: 'knowledge', fear: 'exposure' } },
+      { id: 'unit7', name: 'Unit-7', race: 'android', nation: 'machine-collective', universe: 'beta', alive: true, power: 6, mood: 50, psych: { align: 'neutral-good', mot: 'legacy', fear: 'irrelevance' } },
+      { id: 'zyx', name: 'Zyx-9', race: 'alien', nation: 'stellar-concord', universe: 'beta', alive: true, power: 5, mood: 60, psych: { align: 'neutral-good', mot: 'protection', fear: 'chaos' } },
+      { id: 'thorne', name: 'Prof. Thorne', race: 'human', nation: 'kingdom-of-valor', universe: 'gamma', alive: true, power: 6, mood: 75, psych: { align: 'chaotic-good', mot: 'knowledge', fear: 'failure' } }
+    ];
+    const FAKE_LEADERS = [
+      { name: 'CryptoKing_42', pnl: 12450.50, wins: 87, losses: 23 },
+      { name: 'OracleX', pnl: 9820.30, wins: 102, losses: 45 },
+      { name: 'LuckyDragon', pnl: 7340.80, wins: 65, losses: 30 },
+      { name: 'MarketSage', pnl: 5120.00, wins: 78, losses: 52 },
+      { name: 'NeonTrader', pnl: 3890.25, wins: 54, losses: 38 }
+    ];
+    const SPONSORS = [
+      { brand: '⚔️ REALM OF LEGENDS', title: 'Will the Dragon King conquer the Northern Realm?', desc: 'Sponsored by Realm of Legends — the #1 fantasy RPG.', mult: 2 },
+      { brand: '🎬 MULTIVERSE WARS', title: 'Will Universe Alpha collide with Beta?', desc: 'Stream the hit series now.', mult: 2 },
+      { brand: '🧠 BRILLIANT', title: 'Will Dr. Aris solve the quantum puzzle?', desc: 'Master logic & science.', mult: 2 }
+    ];
+    const EARN_METHODS = [
+      { id: 'sim', tier: 1, icon: '🎬', title: 'Narrative Simulation', desc: '5-second AI-generated story clip', reward: 25, time: 5 },
+      { id: 'video', tier: 2, icon: '📺', title: 'Video Ad', desc: '30-second sponsored video', reward: 50, time: 30 },
+      { id: 'survey', tier: 2, icon: '📝', title: 'Quick Survey', desc: 'Answer 3 preference questions', reward: 75, time: 20 },
+      { id: 'wheel', tier: 3, icon: '🎡', title: 'Bonus Wheel', desc: 'Spin for 2×–10× rewards', reward: '50–500', time: 10, hot: true },
+      { id: 'playable', tier: 3, icon: '🎮', title: 'Play Mini-Game', desc: 'Tap targets in 15 seconds', reward: 100, time: 15, hot: true },
+      { id: 'lucky', tier: 4, icon: '🎰', title: 'Lucky Card Draw', desc: 'Pick a card, win $10–$200', reward: '10–200', time: 10, new: true },
+      { id: 'premium', tier: 5, icon: '⭐', title: 'Premium Offer', desc: 'Install partner app for 30s', reward: 150, time: 45 }
+    ];
+    const CATS = [ 'All', 'Trending', '⭐ Watch', 'Mystery', 'Fantasy', 'Sci-Fi', 'Drama', 'Crisis', '🏷️ Sponsored' ];
+
+    // ============================================================
+    // ADS SYSTEM
+    // ============================================================
+    const Ads = {
+      _last: 0, _count: 0, _streak: 0, _lastDay: null,
+      canShow() { return Date.now() - this._last > C.AD_CD },
+      mark() { this._last = Date.now(); this._count++; this.checkStreak() },
+      checkStreak() {
+        const today = new Date().toDateString();
+        if (this._lastDay !== today)
+        {
+          if (this._lastDay === new Date(Date.now() - 86400000).toDateString()) this._streak++;
+          else this._streak = 1;
+          this._lastDay = today;
+        }
+      },
+      getStreakBonus() { return Math.min(5, this._streak) * 10 }
+    };
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    const S = { d: null, w: null, _view: 'markets', _cat: 'All', _search: '', _storyTab: 'timeline', _selMkt: null, _selSide: null, _betAmt: 50, _prev: {}, _detailTab: 'overview', _lastBet: null, _undoTimer: null, _undoCount: 5, _chat: {}, _alertCond: 'above' };
+    function fresh() {
+      S.d = { balance: C.BAL, markets: [], positions: [], activity: [], timeline: [], watchlist: [], streak: 0, episode: 0, firstRun: true, betHistory: [], alerts: [], totalEarned: C.BAL, earnSources: {} };
+      S.w = { nations: {}, universes: {}, news: [], events: [], portals: [], fateThreads: [] };
+      Object.entries(NATIONS).forEach(([ k, n ]) => { S.w.nations[ n.name ] = { ...n, power: U.ri(40, 80), stability: U.ri(50, 90) } });
+      Object.entries(UNIVERSES).forEach(([ k, u ]) => { S.w.universes[ u.name ] = { ...u, stability: U.ri(70, 95) } });
+      S.w.fateThreads = [ { id: 'ft1', name: 'The Shadow Conspiracy', progress: 0, total: 4, desc: 'A hidden cabal manipulates events.', events: [] } ];
+      S.w.news.push({ time: Date.now(), text: 'Markets open across the multiverse', tag: '' });
+      for (let i = 0; i < C.MAXM; i++)S.d.markets.push(E.genMarket());
+      const sp = E.genSponsored(); if (sp) S.d.markets.unshift(sp);
+    }
+    function load() {
+      const raw = localStorage.getItem(C.KEY);
+      if (raw) { try { const d = JSON.parse(raw); S.d = d.d; S.w = d.w; if (!S.d.betHistory) S.d.betHistory = []; if (!S.d.alerts) S.d.alerts = []; if (!S.d.totalEarned) S.d.totalEarned = C.BAL; if (!S.d.earnSources) S.d.earnSources = {}; return true } catch (e) { } }
+      fresh(); return false;
+    }
+    const save = U.debounce(() => { localStorage.setItem(C.KEY, JSON.stringify({ d: S.d, w: S.w })) }, 500);
+
+    // ============================================================
+    // ENGINE
+    // ============================================================
+    const E = {
+      _tickId: null,
+      alive() { return CAST.filter(c => c.alive) },
+      char(id) { return CAST.find(c => c.id === id) },
+      genMarket() {
+        const uids = Object.keys(UNIVERSES); const uid = U.rc(uids); const u = UNIVERSES[ uid ];
+        const chars = this.alive().filter(c => c.universe === uid);
+        const ch = chars.length ? U.rc(chars) : U.rc(this.alive());
+        const race = RACES[ ch.race ]; const nation = NATIONS[ ch.nation ];
+        const cross = Math.random() > .85; const otherU = cross ? U.rc(uids.filter(x => x !== uid)) : null;
+        const sit = this._sit(ch, race, nation, u, otherU);
+        const hist = []; let p = U.ri(20, 80);
+        for (let i = 0; i < 30; i++) { p = U.clamp(p + (Math.random() - .5) * (cross ? 8 : 5), 5, 95); hist.push(Math.round(p)) }
+        return { id: U.uid('m_'), title: sit.t, desc: sit.d, cat: sit.cat || 'Drama', type: 'binary', yesPrice: hist[ hist.length - 1 ], history: hist, vol: U.ri(1000, 50000), expires: U.ri(120, 1800), resolved: false, outcome: null, episode: S.d.episode + U.ri(1, 3), charId: ch.id, universe: uid, crossUniverse: otherU, race: ch.race, nation: ch.nation, sponsored: false, traderCount: U.ri(5, 120), yesBets: U.ri(3, 80), noBets: U.ri(3, 80) }
+      },
+      genSponsored() {
+        const sp = U.rc(SPONSORS); const uids = Object.keys(UNIVERSES); const uid = U.rc(uids);
+        const chars = this.alive().filter(c => c.universe === uid);
+        const ch = chars.length ? U.rc(chars) : U.rc(this.alive());
+        const hist = []; let p = U.ri(30, 70);
+        for (let i = 0; i < 30; i++) { p = U.clamp(p + (Math.random() - .5) * 4, 5, 95); hist.push(Math.round(p)) }
+        return { id: U.uid('sp_'), title: sp.title, desc: sp.desc, cat: 'Crisis', type: 'binary', yesPrice: hist[ hist.length - 1 ], history: hist, vol: U.ri(50000, 200000), expires: U.ri(300, 2400), resolved: false, outcome: null, episode: S.d.episode + U.ri(1, 3), charId: ch.id, universe: uid, race: ch.race, nation: ch.nation, sponsored: true, brand: sp.brand, mult: sp.mult, traderCount: U.ri(100, 500), yesBets: U.ri(50, 300), noBets: U.ri(50, 300) }
+      },
+      _sit(ch, race, nation, u, otherU) {
+        const s = [];
+        if (otherU) { const ou = UNIVERSES[ otherU ]; s.push({ t: `Will ${ch.name} survive the journey to ${ou.name}?`, d: `A portal opens between dimensions.`, cat: 'Crisis' }) }
+        if (race.name === 'Elf') s.push({ t: `Will ${ch.name} master ancient elven magic?`, d: `Arcane secrets call.`, cat: 'Fantasy' });
+        if (race.name === 'Android') s.push({ t: `Will ${ch.name} achieve true sentience?`, d: `Consciousness questioned.`, cat: 'Sci-Fi' });
+        if (race.name === 'Orc') s.push({ t: `Will ${ch.name} prove honor in combat?`, d: `Battle awaits.`, cat: 'Drama' });
+        if (race.name === 'Alien') s.push({ t: `Will ${ch.name} reveal their true form?`, d: `Secrets of the cosmos.`, cat: 'Mystery' });
+        if (race.name === 'Dragon') s.push({ t: `Will ${ch.name} awaken from centuries of slumber?`, d: `Ancient power stirs.`, cat: 'Fantasy' });
+        s.push({ t: `Will ${ch.name} survive the crisis in ${u.name}?`, d: `Mortal danger.`, cat: 'Crisis' }, { t: `Will ${ch.name} betray ${nation.name}?`, d: `Loyalty tested.`, cat: 'Drama' }, { t: `Will ${ch.name} rise to power in ${nation.name}?`, d: `Ambition drives forward.`, cat: 'Drama' });
+        return U.rc(s);
+      },
+      volatility(m) { const h = m.history.slice(-10); if (h.length < 2) return 0; let sum = 0; for (let i = 1; i < h.length; i++)sum += Math.abs(h[ i ] - h[ i - 1 ]); return sum / (h.length - 1) },
+      cashoutMult(p) { const m = S.d.markets.find(x => x.id === p.mktId); if (!m) return 1; const elapsed = (Date.now() - p.createdAt) / 1000; const total = m.expires + elapsed; return 0.5 + Math.min(1, elapsed / total) * 0.8 },
+      kelly(p, m) { const price = p.side === 'YES' ? m.yesPrice : (100 - m.yesPrice); const b = (100 / price) - 1; const pWin = price / 100; const q = 1 - pWin; const f = (b * pWin - q) / b; return Math.max(0, Math.min(0.25, f)) * 100 },
+      resolve(m) {
+        m.resolved = true; S.d.episode++;
+        let prob = m.yesPrice;
+        if (m.charId) { const ch = this.char(m.charId); if (ch) { if (m.title.includes('betray') && ch.mood > 60) prob -= 10; if (m.title.includes('power') && ch.power > 7) prob += 10 } }
+        prob += (Math.random() - .5) * 20;
+        m.outcome = prob > 50 ? 'YES' : 'NO';
+        const ch = m.charId ? this.char(m.charId) : null;
+        const race = RACES[ m.race ]; const u = UNIVERSES[ m.universe ];
+        let text = '', journal = null;
+        if (m.outcome === 'YES') { text = `${ch?.name || 'They'}, the ${race.name}, triumphed in ${u.name}.`; if (ch) { ch.mood = Math.min(100, ch.mood + 10); ch.power = Math.min(10, ch.power + 1); journal = { name: ch.name, text: `Victory is mine. The path forward is clear.` } } }
+        else { text = `${ch?.name || 'They'}, the ${race.name}, fell in ${u.name}.`; if (ch) { ch.mood = Math.max(0, ch.mood - 15); ch.power = Math.max(1, ch.power - 1); journal = { name: ch.name, text: `Defeat... but not the end.` } } }
+        if (ch && m.title.includes('survive') && m.outcome === 'NO') { ch.alive = false; ch.power = 0 }
+        S.d.timeline.unshift({ ep: S.d.episode, text, outcome: m.outcome, marketId: m.id, time: Date.now(), universe: m.universe, race: m.race, journal });
+        S.w.events.unshift({ title: m.title, outcome: m.outcome, ep: S.d.episode, time: Date.now() });
+        S.w.news.unshift({ time: Date.now(), text: `${m.outcome === 'YES' ? '✓' : '✗'} [${u.tag}] ${m.title}`, tag: '' });
+        // Fate thread progress
+        if (S.w.fateThreads.length > 0 && Math.random() > .6) { const t = U.rc(S.w.fateThreads); if (t.progress < t.total) { t.progress++; t.events.push({ ep: S.d.episode, text: m.title, outcome: m.outcome }); if (t.progress >= t.total) { UI.showToast(`🧵 Thread complete: ${t.name}`, 'ach'); S.w.fateThreads.push({ id: U.uid('ft'), name: U.rc([ 'The Silent War', 'Quantum Rift', 'Dragon\'s Return', 'Android Uprising' ]), progress: 0, total: U.ri(3, 5), desc: 'A new narrative thread emerges.', events: [] }) } } }
+        let playerWon = false, winAmt = 0;
+        S.d.positions.forEach(p => {
+          if (p.mktId === m.id && p.status === 'open')
+          {
+            const payout = m.sponsored && p.side === m.outcome ? p.contracts * m.mult : p.contracts;
+            if (p.side === m.outcome) { p.status = 'won'; S.d.balance += payout; S.d.streak++; playerWon = true; winAmt = payout; UI.addAct(`🎉 <b>WIN</b> +${U.fmt(payout)}${m.sponsored ? ' (2×)' : ''} · ${m.title.slice(0, 30)}`); S.d.betHistory.unshift({ time: Date.now(), title: m.title, side: p.side, amt: p.cost, result: 'won', pnl: payout - p.cost }) }
+            else { p.status = 'lost'; S.d.streak = 0; UI.addAct(`💔 <b>LOSS</b> · ${m.title.slice(0, 30)}`); S.d.betHistory.unshift({ time: Date.now(), title: m.title, side: p.side, amt: p.cost, result: 'lost', pnl: -p.cost }) }
+          }
+        });
+        UI.addAct(`🏁 Resolved <b>${m.outcome}</b>: ${m.title}`);
+        if (playerWon) UI.showResolution(true, winAmt, m.title, m.sponsored);
+        else if (S.d.betHistory[ 0 ]?.result === 'lost') UI.showResolution(false, Math.abs(S.d.betHistory[ 0 ].pnl), m.title, false);
+        S.d.alerts = S.d.alerts.filter(a => { if (a.mktId === m.id) { UI.showToast(`🔔 ${a.message}`, 'ach'); return false } return true });
+        save();
+      },
+      tick() {
+        S.d.markets.forEach(m => {
+          if (m.resolved) return;
+          S._prev[ m.id ] = m.yesPrice;
+          const vol = this.volatility(m);
+          m.yesPrice = U.clamp(Math.round(m.yesPrice + (Math.random() - .5) * (2 + vol / 2)), 3, 97);
+          m.history.push(m.yesPrice); if (m.history.length > C.MAXH) m.history.shift();
+          m.vol += U.ri(10, 200); m.expires = Math.max(0, m.expires - 2);
+          m.traderCount = U.clamp(m.traderCount + U.ri(-5, 8), 5, 500);
+          if (Math.random() > .7) { if (Math.random() > m.yesPrice / 100) m.noBets++; else m.yesBets++ }
+          if (m.expires <= 0) this.resolve(m);
+        });
+        S.d.markets.forEach(m => { if (m.resolved) return; S.d.alerts.forEach(a => { if (a.mktId === m.id && !a.triggered) { if ((a.cond === 'above' && m.yesPrice >= a.target) || (a.cond === 'below' && m.yesPrice <= a.target)) { a.triggered = true; UI.showToast(`🔔 ${a.message}`, 'ach') } } }) });
+        if (S.d.markets.filter(m => !m.resolved).length < C.MINM && Math.random() > .5) { const newM = Math.random() > .85 ? this.genSponsored() : this.genMarket(); S.d.markets.push(newM); UI.addAct(`📈 New${newM.sponsored ? ' sponsored' : ''}: <b>${newM.title.slice(0, 40)}</b>`) }
+        if (Math.random() > .5) { const m = U.rc(S.d.markets.filter(m => !m.resolved)); if (m) UI.addAct(`<b>@${U.rc([ 'alpha', 'beta', 'gamma', 'delta', 'omega' ])}_${U.ri(10, 999)}</b> bought <span class="xt">${Math.random() > .5 ? 'YES' : 'NO'}</span> · ${U.fmt(U.ri(1, 50) * 10)}`) }
+        save(); UI.scheduleRender();
+      },
+      start() { if (this._tickId) return; this._tickId = setInterval(() => U.safe(() => this.tick()), C.TICK) },
+      stop() { if (this._tickId) { clearInterval(this._tickId); this._tickId = null } },
+      buy(m, side, amt) {
+        if (amt > S.d.balance || amt < 1) return null;
+        const price = side === 'YES' ? m.yesPrice : (100 - m.yesPrice); const contracts = amt / (price / 100);
+        S.d.balance -= amt;
+        const pos = { id: U.uid('p_'), mktId: m.id, side, contracts, avgPrice: price, cost: amt, status: 'open', type: m.type, createdAt: Date.now() };
+        S.d.positions.unshift(pos);
+        UI.addAct(`Bought <span class="${side === 'YES' ? 'yt' : 'nt'}">${side}</span> · ${contracts.toFixed(1)} · ${U.fmt(amt)}`);
+        UI.showToast(`Position opened · ${side}`, 'win');
+        S.d.betHistory.unshift({ time: Date.now(), title: m.title, side, amt, result: 'open', pnl: 0, posId: pos.id });
+        save(); return pos;
+      },
+      cashout(pid) {
+        const p = S.d.positions.find(x => x.id === pid); if (!p || p.status !== 'open') return;
+        const m = S.d.markets.find(x => x.id === p.mktId); if (!m) return;
+        const cp = p.side === 'YES' ? m.yesPrice : (100 - m.yesPrice);
+        const mult = this.cashoutMult(p); const val = p.contracts * (cp / 100) * mult; const pnl = val - p.cost;
+        p.status = 'cashed'; S.d.balance += val;
+        UI.addAct(`💰 Cashed out · +${U.fmt(val)} (${mult.toFixed(2)}×)`);
+        UI.showToast(`Cashed out · +${U.fmt(val)}`, 'win');
+        const hist = S.d.betHistory.find(h => h.posId === pid); if (hist) { hist.result = 'cashed'; hist.pnl = pnl }
+        save();
+      },
+      sell(pid) {
+        const p = S.d.positions.find(x => x.id === pid); if (!p || p.status !== 'open') return;
+        const m = S.d.markets.find(x => x.id === p.mktId); if (!m) return;
+        const cp = p.side === 'YES' ? m.yesPrice : (100 - m.yesPrice); const val = p.contracts * (cp / 100);
+        p.status = 'sold'; S.d.balance += val;
+        UI.addAct(`Sold · +${U.fmt(val)}`); UI.showToast(`Sold · +${U.fmt(val)}`, 'win');
+        const hist = S.d.betHistory.find(h => h.posId === pid); if (hist) { hist.result = 'sold'; hist.pnl = val - p.cost }
+        save();
+      }
+    };
+
+    // ============================================================
+    // UI
+    // ============================================================
+    const UI = {
+      _raf: false, _toastT: null,
+      addAct(t) { S.d.activity.unshift({ time: Date.now(), text: t }); if (S.d.activity.length > 100) S.d.activity.pop() },
+      showToast(msg, type) { const t = document.getElementById('toast'); if (!t) return; t.textContent = msg; t.className = 'toast show ' + (type || ''); clearTimeout(this._toastT); this._toastT = setTimeout(() => t.classList.remove('show'), C.TOAST) },
+      scheduleRender() { if (this._raf) return; this._raf = true; requestAnimationFrame(() => { this._raf = false; this.renderView(); this.renderBal(); this.renderTicker() }) },
+      renderBal() {
+        const e = document.getElementById('bal'); if (e) e.textContent = S.d.balance.toFixed(2);
+        const sb = document.getElementById('streakB');
+        if (sb) { if (Ads._streak > 1) { sb.style.display = 'inline'; sb.textContent = `🔥${Ads._streak}` } else sb.style.display = 'none' }
+      },
+      renderTicker() {
+        const t = document.getElementById('otT'); if (!t) return;
+        const active = S.d.markets.filter(m => !m.resolved).slice(0, 15);
+        t.innerHTML = active.map(m => { const prev = S._prev[ m.id ] || m.yesPrice; const dir = m.yesPrice > prev ? 'up' : m.yesPrice < prev ? 'down' : ''; const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : ''; return `<div class="ot-i"><span class="ot-tt">${U.sanitize(m.title.slice(0, 25))}…</span><span class="ot-p">${m.yesPrice}¢</span><span class="ot-a ${dir}">${arrow}</span></div>` }).join('');
+      },
+      sparkSVG(hist, w, h) {
+        if (!hist || hist.length < 2) return '';
+        const min = Math.min(...hist), max = Math.max(...hist), range = max - min || 1;
+        const up = hist[ hist.length - 1 ] >= hist[ 0 ]; const color = up ? 'var(--yes)' : 'var(--no)';
+        const pts = hist.map((v, i) => `${(i / (hist.length - 1) * w).toFixed(1)},${(h - ((v - min) / range) * h).toFixed(1)}`).join(' ');
+        return `<svg class="mkt-spark" viewBox="0 0 ${w} ${h}"><polyline fill="none" stroke="${color}" stroke-width="1.5" points="${pts}"/></svg>`;
+      },
+      areaSVG(hist, w, h, color) {
+        if (!hist || hist.length < 2) return '';
+        const min = Math.min(...hist), max = Math.max(...hist), range = max - min || 1;
+        const pts = hist.map((v, i) => [ i / (hist.length - 1) * w, h - ((v - min) / range) * (h - 10) - 5 ]);
+        const line = pts.map(p => p.join(',')).join(' '); const area = `0,${h} ${line} ${w},${h}`;
+        const gid = 'g' + Math.random().toString(36).slice(2, 6);
+        return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="width:100%;height:100%"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity=".3"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><polygon points="${area}" fill="url(#${gid})"/><polyline points="${line}" fill="none" stroke="${color}" stroke-width="1.5"/></svg>`;
+      },
+      filtered() {
+        let l = S.d.markets.filter(m => !m.resolved); const cat = S._cat;
+        if (cat === 'Trending') l = l.filter(m => m.vol > 25000);
+        else if (cat === '⭐ Watch') l = l.filter(m => S.d.watchlist.includes(m.id));
+        else if (cat === '🏷️ Sponsored') l = l.filter(m => m.sponsored);
+        else if (cat !== 'All') l = l.filter(m => m.cat === cat);
+        if (S._search) { const q = S._search.toLowerCase(); l = l.filter(m => m.title.toLowerCase().includes(q)) }
+        return l;
+      },
+      renderMarkets() {
+        const list = this.filtered(); const all = S.d.markets.filter(m => !m.resolved); const feat = [ ...all ].sort((a, b) => b.vol - a.vol)[ 0 ];
+        let h = `<div class="search-wrap"><div class="search-box"><span>🔍</span><input placeholder="Search markets..." value="${U.sanitize(S._search)}" oninput="App.onSearch(this.value)"></div></div>`;
+        h += `<div class="cat-strip">${CATS.map(c => `<button class="cat-pill ${S._cat === c ? 'active' : ''}" onclick="App.setCat('${c}')">${c}</button>`).join('')}</div>`;
+        const sponsored = all.find(m => m.sponsored);
+        if (sponsored && S._cat !== '🏷️ Sponsored') h += `<div class="sponsored" onclick="App.openMkt('${sponsored.id}')"><div class="sp-brand">${U.sanitize(sponsored.brand)}</div><div class="sp-title">${U.sanitize(sponsored.title)}</div><div class="sp-desc">${U.sanitize(sponsored.desc)}</div></div>`;
+        if (feat && !feat.sponsored) { const np = 100 - feat.yesPrice; const u = UNIVERSES[ feat.universe ]; h += `<div class="featured" onclick="App.openMkt('${feat.id}')"><div class="feat-tag">★ FEATURED · <span class="utag ${u.cls}">${u.tag}</span></div><div class="feat-title">${U.sanitize(feat.title)}</div><div class="feat-meta"><span>Vol ${U.fmtB(feat.vol)}</span><span>${RACES[ feat.race ].name}</span></div><div class="feat-prices"><div class="price-chip yes"><div class="pl">YES</div><div class="pv">${feat.yesPrice}¢</div></div><div class="price-chip no"><div class="pl">NO</div><div class="pv">${np}¢</div></div></div></div>` }
+        if (Ads.canShow()) h += this._nativeAdHTML();
+        h += `<div class="sec-title">ALL MARKETS · ${list.length}</div><div class="mkt-list">`;
+        list.forEach((m, i) => {
+          const price = m.yesPrice; const prev = S._prev[ m.id ] || price;
+          const dir = price > prev ? 'up' : price < prev ? 'down' : ''; const flash = dir ? `flash-${dir}` : '';
+          const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '';
+          const starred = S.d.watchlist.includes(m.id); const u = UNIVERSES[ m.universe ];
+          const vol = E.volatility(m); const volCls = vol < 2 ? 'low' : vol < 4 ? 'med' : 'high'; const volLbl = vol < 2 ? 'Low' : vol < 4 ? 'Med' : 'High';
+          if (i > 0 && i % 5 === 0 && Ads.canShow()) h += this._nativeAdHTML();
+          h += `<div class="mkt-row" onclick="App.openMkt('${m.id}')"><button class="mkt-star ${starred ? 'on' : ''}" onclick="event.stopPropagation();App.toggleStar('${m.id}')">${starred ? '★' : '☆'}</button>${this.sparkSVG(m.history, 52, 24)}<div class="mkt-info"><div class="mkt-title">${U.sanitize(m.title)} <span class="utag ${u.cls}">${u.tag}</span><span class="vol-badge ${volCls}">${volLbl} σ</span></div><div class="mkt-sub"><span>${RACES[ m.race ].name}</span><span class="dot"></span><span>${m.cat}</span><span class="dot"></span><span>${U.fmtB(m.vol)}</span><span class="dot"></span><span>${m.traderCount} traders</span></div></div><div class="mkt-price"><div class="mp ${flash}">${price}¢<span class="arrow ${dir}">${arrow}</span></div><div class="ml">YES</div></div></div>`;
+        });
+        h += `</div>`; document.getElementById('v-markets').innerHTML = h;
+      },
+      _nativeAdHTML() {
+        const ads = [ { t: '🎮 Play Realm of Legends', d: 'Epic fantasy RPG with 10M+ players.', c: 'Watch · Earn $25' }, { t: '📚 Audible — Free Trial', d: 'Listen to bestselling sci-fi & fantasy.', c: 'Watch · Earn $25' }, { t: '🎬 Stream Multiverse Wars', d: 'The hit series about warring dimensions.', c: 'Watch · Earn $25' } ];
+        const ad = U.rc(ads); return `<div class="native-ad" onclick="App.watchMethod('video')"><div class="na-t">${ad.t}</div><div class="na-d">${ad.d}</div><div class="na-c">${ad.c}</div></div>`;
+      },
+      openMkt(id) { if (Ads.canShow() && Math.random() > .7) this.showInterstitial(() => this._doOpen(id)); else this._doOpen(id) },
+      _doOpen(id) { S._selMkt = S.d.markets.find(m => m.id === id); S._selSide = null; S._betAmt = 50; S._detailTab = 'overview'; App.nav('detail') },
+      renderDetail() {
+        const m = S._selMkt; if (!m) return;
+        const u = UNIVERSES[ m.universe ]; const race = RACES[ m.race ]; const nation = NATIONS[ m.nation ];
+        let h = `<div class="det-header"><button class="back-btn" onclick="App.nav('markets')">← Markets</button>`;
+        if (m.sponsored) h += `<div class="det-cat" style="color:var(--gold)">${U.sanitize(m.brand)} · SPONSORED · 2× PAYOUT</div>`;
+        else h += `<div class="det-cat"><span class="utag ${u.cls}">${u.tag}</span> ${m.cat} · ${race.name} · ${nation?.name || ''}</div>`;
+        h += `<div class="det-title">${U.sanitize(m.title)}</div><div class="det-desc">${U.sanitize(m.desc)}</div><div class="det-meta"><span>Vol <b>${U.fmtB(m.vol)}</b></span><span>Expires <b>${m.resolved ? 'Resolved' : Math.floor(m.expires / 60) + 'm'}</b></span></div><div class="det-actions"><button class="det-action" onclick="App.toggleStar('${m.id}');UI.renderDetail()">${S.d.watchlist.includes(m.id) ? '★ Watching' : '☆ Watch'}</button><button class="det-action" onclick="App.setAlert('${m.id}')">🔔 Alert</button></div></div>`;
+        if (m.resolved) h += `<div class="resolved-banner ${m.outcome === 'YES' ? 'yes' : 'no'}">RESOLVED: ${m.outcome}${m.sponsored ? ' · 2× SPONSORED' : ''}</div>`;
+        else
+        {
+          const total = m.yesBets + m.noBets; const yesPct = Math.round(m.yesBets / total * 100);
+          h += `<div class="sentiment"><div class="s-head"><span class="s-yes">YES ${yesPct}%</span><span class="s-no">NO ${100 - yesPct}%</span></div><div class="s-bar"><div class="s-fill" style="width:${yesPct}%"></div></div><div class="s-traders"><span><b>${m.traderCount}</b> active traders</span><span><b>${U.ri(5, 50)}</b> bought YES in last 60s</span></div></div>`;
+          h += `<div class="det-tabs"><button class="det-tab ${S._detailTab === 'overview' ? 'active' : ''}" onclick="S._detailTab='overview';UI.renderDetail()">Trade</button><button class="det-tab ${S._detailTab === 'chart' ? 'active' : ''}" onclick="S._detailTab='chart';UI.renderDetail()">Chart</button><button class="det-tab ${S._detailTab === 'book' ? 'active' : ''}" onclick="S._detailTab='book';UI.renderDetail()">Book</button><button class="det-tab ${S._detailTab === 'chat' ? 'active' : ''}" onclick="S._detailTab='chat';UI.renderDetail()">Chat</button></div>`;
+          if (S._detailTab === 'chart') { const color = m.history[ m.history.length - 1 ] >= m.history[ 0 ] ? 'var(--yes)' : 'var(--no)'; h += `<div class="chart-wrap">${this.areaSVG(m.history, 400, 160, color)}</div>` }
+          else if (S._detailTab === 'book') h += this._orderBookHTML(m);
+          else if (S._detailTab === 'chat') h += this._chatHTML(m);
+          else { const color = m.history[ m.history.length - 1 ] >= m.history[ 0 ] ? 'var(--yes)' : 'var(--no)'; h += `<div class="chart-wrap" style="padding:12px 16px">${this.areaSVG(m.history.slice(-20), 400, 80, color)}</div>`; const np = 100 - m.yesPrice; h += `<div class="outcome-row"><button class="out-card yes ${S._selSide === 'YES' ? 'sel' : ''}" onclick="App.selSide('YES')"><div class="ol">YES</div><div class="op">${m.yesPrice}¢</div><div class="os">${m.yesBets} bets</div></button><button class="out-card no ${S._selSide === 'NO' ? 'sel' : ''}" onclick="App.selSide('NO')"><div class="ol">NO</div><div class="op">${np}¢</div><div class="os">${m.noBets} bets</div></button></div>` }
+        }
+        document.getElementById('v-detail').innerHTML = h;
+        if (!m.resolved && S._detailTab !== 'chat') this.renderSlip(); else this.closeSlip();
+      },
+      _orderBookHTML(m) {
+        const mid = m.yesPrice; const bids = [], asks = [];
+        for (let i = 1; i <= 5; i++) { bids.push({ price: mid - i * 2, volume: U.ri(50, 500) * (6 - i) }); asks.push({ price: mid + i * 2, volume: U.ri(50, 500) * (6 - i) }) }
+        const maxVol = Math.max(...bids.map(b => b.volume), ...asks.map(a => a.volume));
+        let h = `<div class="orderbook"><div class="ob-title"><span>ORDER BOOK</span><span style="color:var(--tx2)">Spread: ${asks[ 0 ].price - bids[ 0 ].price}¢</span></div><div class="ob-spread">Mid: <b>${mid}¢</b></div>`;
+        asks.reverse().forEach(a => { const w = (a.volume / maxVol) * 100; h += `<div class="ob-row ask"><div class="ob-bg" style="width:${w}%"></div><div class="ob-p">${a.price}¢</div><div class="ob-v">${a.volume}</div></div>` });
+        h += `<div class="ob-divider"></div>`;
+        bids.forEach(b => { const w = (b.volume / maxVol) * 100; h += `<div class="ob-row bid"><div class="ob-bg" style="width:${w}%"></div><div class="ob-p">${b.price}¢</div><div class="ob-v">${b.volume}</div></div>` });
+        return h + `</div>`;
+      },
+      _chatHTML(m) {
+        if (!S._chat[ m.id ]) { const msgs = []; const names = [ 'CryptoKing', 'OracleX', 'LuckyDragon', 'MarketSage', 'NeonTrader', 'ShadowBet' ]; for (let i = 0; i < 8; i++) { const n = U.rc(names) + '_' + U.ri(10, 99); const side = Math.random() > .5 ? 'YES' : 'NO'; msgs.push({ name: n, side, text: U.rc([ `just bought ${side}!`, `feeling ${side === 'YES' ? 'bullish' : 'bearish'}`, `${side} all the way 🚀`, `smart money on ${side}` ]), time: Date.now() - U.ri(0, 600000) }) } S._chat[ m.id ] = msgs.sort((a, b) => b.time - a.time) }
+        let h = `<div class="live-chat"><div class="lc-title">💬 LIVE TRADER CHAT</div>`;
+        S._chat[ m.id ].forEach(msg => { h += `<div class="lc-msg"><b>${U.sanitize(msg.name)}</b> <span class="lc-${msg.side.toLowerCase()}">${msg.side}</span> ${U.sanitize(msg.text)}</div>` });
+        return h + `</div>`;
+      },
+      renderSlip() {
+        const m = S._selMkt; if (!m) return; const side = S._selSide; if (!side) { this.closeSlip(); return }
+        const price = side === 'YES' ? m.yesPrice : (100 - m.yesPrice); const contracts = S._betAmt / (price / 100); const payout = m.sponsored ? contracts * m.mult : contracts; const profit = payout - S._betAmt;
+        const kellyPct = E.kelly({ side, createdAt: Date.now() }, m); const kellyAmt = S.d.balance * (kellyPct / 100);
+        const insufficient = S._betAmt > S.d.balance;
+        document.getElementById('betslip').innerHTML = `<div class="slip-handle"></div><div class="slip-head"><div class="slip-title">Bet ${side}${m.sponsored ? ' · 2× Payout' : ''}</div><button class="slip-close" onclick="App.closeSlip()">✕</button></div><div class="slip-mkt">${U.sanitize(m.title)}</div><div class="amt-input"><span class="pfx">$</span><input type="number" value="${S._betAmt}" min="1" oninput="App.updateAmt(this.value)"></div><div class="quick-amts"><button class="qa" onclick="App.setAmt(10)">$10</button><button class="qa" onclick="App.setAmt(25)">$25</button><button class="qa" onclick="App.setAmt(50)">$50</button><button class="qa" onclick="App.setAmt(100)">$100</button><button class="qa" onclick="App.setAmt(Math.floor(S.d.balance))">MAX</button></div><div class="slip-divider"></div><div class="slip-row"><span class="k">Avg price</span><span class="v">${price}¢</span></div><div class="slip-row"><span class="k">Contracts</span><span class="v">${contracts.toFixed(2)}</span></div><div class="slip-row"><span class="k">To win</span><span class="v profit">${U.fmt(payout)}${m.sponsored ? ' (2×)' : ''}</span></div><div class="slip-row"><span class="k">Profit</span><span class="v profit">+${U.fmt(profit)}</span></div><div class="slip-row"><span class="k">🎯 Kelly suggests</span><span class="v kelly">${U.fmt(kellyAmt)} (${kellyPct.toFixed(1)}%)</span></div><button class="sub-btn ${side === 'YES' ? 'yes-btn' : 'no-btn'}" onclick="App.doBuy()" ${insufficient ? 'disabled' : ''}>${insufficient ? '⚠️ Need more chips — tap ▶ to earn' : `Place Bet · ${U.fmt(S._betAmt)}`}</button>`;
+        document.getElementById('betslip').classList.add('open');
+      },
+      closeSlip() { document.getElementById('betslip').classList.remove('open') },
+      showUndoToast(pos) {
+        S._lastBet = pos; S._undoCount = C.UNDO_SEC;
+        const t = document.getElementById('undoToast');
+        document.getElementById('utText').textContent = `Bet placed · ${U.fmt(pos.cost)}`;
+        t.classList.add('show'); clearInterval(S._undoTimer);
+        document.getElementById('utTimer').textContent = S._undoCount;
+        S._undoTimer = setInterval(() => { S._undoCount--; const el = document.getElementById('utTimer'); if (!el || S._undoCount <= 0) { clearInterval(S._undoTimer); t.classList.remove('show'); S._lastBet = null; return } el.textContent = S._undoCount }, 1000);
+      },
+      renderPortfolio() {
+        const open = S.d.positions.filter(p => p.status === 'open'); const closed = S.d.positions.filter(p => p.status !== 'open');
+        let pnl = 0, wins = 0, losses = 0;
+        closed.forEach(p => { if (p.status === 'won') { pnl += (p.contracts - p.cost); wins++ } else if (p.status === 'cashed' || p.status === 'sold') { pnl += (p.contracts || 0) - (p.cost); if (p.status === 'cashed') wins++; else losses++ } else { pnl -= p.cost; losses++ } });
+        open.forEach(p => { const m = S.d.markets.find(x => x.id === p.mktId); if (!m) return; const cp = p.side === 'YES' ? m.yesPrice : (100 - m.yesPrice); pnl += (p.contracts * (cp / 100) - p.cost) });
+        const wr = (wins + losses) > 0 ? Math.round(wins / (wins + losses) * 100) : 0;
+        let h = `<div class="pnl-card"><div class="pnl-label">Total P&L</div><div class="pnl-val" style="color:${pnl >= 0 ? 'var(--yes)' : 'var(--no)'}">${pnl >= 0 ? '+' : ''}${U.fmt(pnl)}</div><div class="pnl-stats"><div class="pnl-stat"><div class="n">${wins}</div><div class="l">Wins</div></div><div class="pnl-stat"><div class="n">${losses}</div><div class="l">Losses</div></div><div class="pnl-stat"><div class="n">${wr}%</div><div class="l">Win Rate</div></div><div class="pnl-stat"><div class="n">${S.d.streak}🔥</div><div class="l">Streak</div></div></div></div><div class="pos-sec">`;
+        if (open.length) { h += `<div class="pos-sub">Open (${open.length})</div>`; open.forEach(p => { const m = S.d.markets.find(x => x.id === p.mktId); if (!m) return; const cp = p.side === 'YES' ? m.yesPrice : (100 - m.yesPrice); const cv = p.contracts * (cp / 100); const pl = cv - p.cost; const sc = p.side === 'YES' ? 'yes' : 'no'; const barW = Math.min(100, Math.abs(pl) / p.cost * 100); const barC = pl >= 0 ? 'var(--yes)' : 'var(--no)'; const cashoutMult = E.cashoutMult(p); const cashoutVal = cv * cashoutMult; h += `<div class="pos" onclick="App.openMkt('${p.mktId}')"><div class="pos-top"><div class="pos-title">${U.sanitize(m.title)}</div><div class="pos-side ${sc}">${p.side} · ${p.contracts.toFixed(1)}</div></div><div class="pos-bot"><span>${p.avgPrice}¢ → ${cp}¢</span><span class="pnl" style="color:${pl >= 0 ? 'var(--yes)' : 'var(--no)'}">${pl >= 0 ? '+' : ''}${U.fmt(pl)}</span></div><div class="pos-pnl-bar"><div class="pos-pnl-fill" style="width:${barW}%;background:${barC}"></div></div><div class="pos-actions"><button class="pos-btn cashout" onclick="event.stopPropagation();App.cashout('${p.id}')">💰 Cash Out<span class="co-mult"> · ${cashoutMult.toFixed(2)}× · ${U.fmt(cashoutVal)}</span></button><button class="pos-btn" onclick="event.stopPropagation();App.sellPos('${p.id}')">Sell</button></div></div>` }) }
+        if (closed.length) { h += `<div class="pos-sub">Closed (${closed.length})</div>`; closed.forEach(p => { const m = S.d.markets.find(x => x.id === p.mktId); const pl = p.status === 'won' ? (p.contracts - p.cost) : (p.contracts || 0) - p.cost; const sc = p.side === 'YES' ? 'yes' : 'no'; h += `<div class="pos" style="opacity:.5"><div class="pos-top"><div class="pos-title">${m ? U.sanitize(m.title) : 'Unknown'}</div><div class="pos-side ${sc}">${p.side} · ${p.status.toUpperCase()}</div></div><div class="pos-bot"><span>${p.contracts.toFixed(1)} @ ${p.avgPrice}¢</span><span class="pnl" style="color:${pl >= 0 ? 'var(--yes)' : 'var(--no)'}">${pl >= 0 ? '+' : ''}${U.fmt(pl)}</span></div></div>` }) }
+        if (!S.d.positions.length) h += `<div class="empty">No positions yet. Place your first trade!</div>`;
+        h += `</div>`; document.getElementById('v-portfolio').innerHTML = h;
+      },
+      renderEarn() {
+        const streakBonus = Ads.getStreakBonus();
+        let h = `<div class="earn-hero"><div class="eh-free">🎁 100% FREE · NO PURCHASE NECESSARY</div><h2>Earn Chips by Watching</h2><p>Every chip in WagerTale is earned by watching ads, simulations, and completing offers. <b style="color:var(--tx)">You never buy chips with real money — ever.</b></p>${Ads._streak > 1 ? `<div style="background:var(--gold2);border:1px solid rgba(240,184,0,.3);border-radius:var(--r);padding:8px;margin-top:8px;font-size:11px;color:var(--gold)"><b>🔥 ${Ads._streak}-day streak!</b> +${streakBonus}% bonus on all rewards</div>` : ''}</div>`;
+        h += `<div class="sec-title" style="padding-left:16px">WAYS TO EARN · ${EARN_METHODS.length} OPTIONS</div><div class="earn-methods">`;
+        EARN_METHODS.forEach(m => { const reward = typeof m.reward === 'number' ? Math.round(m.reward * (1 + streakBonus / 100)) : m.reward; const tag = m.hot ? '<span class="em-tag hot">HOT</span>' : m.new ? '<span class="em-tag new">NEW</span>' : ''; h += `<div class="earn-method" onclick="App.watchMethod('${m.id}')"><div class="em-icon t${m.tier}">${m.icon}</div><div class="em-info"><div class="em-title">${m.title} ${tag}</div><div class="em-desc">${m.desc}</div></div><div class="em-reward"><div class="em-amt">+${typeof reward === 'number' ? U.fmt(reward) : reward}</div><div class="em-time">${m.time}s · AD</div></div></div>` });
+        h += `</div>`;
+        h += `<div style="margin:0 16px 16px;padding:14px;background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r)"><div style="font-size:10px;font-weight:700;color:var(--tx3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Your Earnings Stats</div><div style="display:flex;justify-content:space-around;text-align:center"><div><div style="font-size:18px;font-weight:800;color:var(--yes)">${U.fmt(S.d.totalEarned || C.BAL)}</div><div style="font-size:10px;color:var(--tx3)">Total Earned</div></div><div><div style="font-size:18px;font-weight:800;color:var(--acc)">${Ads._count}</div><div style="font-size:10px;color:var(--tx3)">Ads Watched</div></div><div><div style="font-size:18px;font-weight:800;color:var(--gold)">${Ads._streak}🔥</div><div style="font-size:10px;color:var(--tx3)">Day Streak</div></div></div></div>`;
+        h += `<div class="earn-disclaimer"><b>💡 How it works:</b> Chips are virtual currency earned only through watching ads and completing offers. <b>No real money is ever exchanged.</b> Chips cannot be purchased, cashed out, or converted to real currency. They exist solely for in-app trading entertainment.</div>`;
+        document.getElementById('v-earn').innerHTML = h;
+      },
+      renderHistory() {
+        let h = `<div class="sec-title" style="padding:16px 16px 8px">BET HISTORY · ${S.d.betHistory.length}</div>`;
+        if (!S.d.betHistory.length) h += `<div class="empty">No bets yet. Place your first trade!</div>`;
+        S.d.betHistory.slice(0, 50).forEach(b => { const icon = b.result === 'win' ? 'win' : b.result === 'lost' ? 'lose' : 'open'; const sym = b.result === 'win' ? '✓' : b.result === 'lost' ? '✗' : '⏳'; const amtCls = b.result === 'win' ? 'win' : b.result === 'lost' || b.result === 'sold' ? 'lose' : 'open'; const amtTxt = b.result === 'open' ? U.fmt(b.amt) : (b.pnl >= 0 ? '+' : '') + U.fmt(b.pnl); h += `<div class="hist-item"><div class="hist-icon ${icon}">${sym}</div><div class="hist-info"><div class="hist-title">${U.sanitize(b.title)}</div><div class="hist-sub">${b.side} · ${new Date(b.time).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div></div><div class="hist-amt ${amtCls}">${amtTxt}</div></div>` });
+        document.getElementById('v-history').innerHTML = h;
+      },
+      renderLeaders() {
+        const playerPnl = S.d.betHistory.reduce((s, b) => s + (b.pnl || 0), 0);
+        const playerWins = S.d.betHistory.filter(b => b.result === 'win').length;
+        const playerLosses = S.d.betHistory.filter(b => b.result === 'lost').length;
+        const all = [ ...FAKE_LEADERS, { name: 'You (me)', pnl: playerPnl, wins: playerWins, losses: playerLosses, isMe: true } ];
+        all.sort((a, b) => b.pnl - a.pnl);
+        let h = `<div class="sec-title" style="padding:16px 16px 8px">🏆 LEADERBOARD · TOP TRADERS</div>`;
+        all.forEach((l, i) => { const rank = i + 1; const rankCls = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : l.isMe ? 'me' : ''; const pnlCls = l.pnl >= 0 ? 'pos' : 'neg'; const wr = (l.wins + l.losses) > 0 ? Math.round(l.wins / (l.wins + l.losses) * 100) : 0; h += `<div class="lb-item"><div class="lb-rank ${rankCls}">${rank}</div><div class="lb-info"><div class="lb-name">${U.sanitize(l.name)}</div><div class="lb-stats">${l.wins}W / ${l.losses}L · ${wr}% WR</div></div><div class="lb-pnl ${pnlCls}">${l.pnl >= 0 ? '+' : ''}${U.fmt(l.pnl)}</div></div>` });
+        document.getElementById('v-leaders').innerHTML = h;
+      },
+      renderStory() {
+        const tab = S._storyTab;
+        let h = `<div class="story-tabs"><button class="story-tab ${tab === 'timeline' ? 'active' : ''}" onclick="App.setSTab('timeline')">Timeline</button><button class="story-tab ${tab === 'universes' ? 'active' : ''}" onclick="App.setSTab('universes')">Universes</button><button class="story-tab ${tab === 'nations' ? 'active' : ''}" onclick="App.setSTab('nations')">Nations</button><button class="story-tab ${tab === 'threads' ? 'active' : ''}" onclick="App.setSTab('threads')">Threads</button></div>`;
+        if (tab === 'timeline')
+        {
+          h += `<div class="story-summary"><h3>📖 Multiverse Narrative</h3><p>${S.d.timeline.slice(0, 5).reverse().map(e => U.sanitize(e.text)).join(' ') || 'Story has not begun.'}</p><div style="margin-top:8px;font-size:10px;color:var(--tx3)">Episode ${S.d.episode} · ${S.d.timeline.length} events</div></div><div class="timeline">`;
+          S.d.timeline.slice(0, 15).forEach(e => { const y = e.outcome === 'YES'; const u = UNIVERSES[ e.universe ]; const r = RACES[ e.race ]; h += `<div class="tl-item"><div class="tl-dot ${y ? 'yes' : 'no'}">${y ? '✓' : '✗'}</div><div class="tl-content"><div class="tl-ep"><span>EP ${e.ep} · <span class="utag ${u.cls}">${u.tag}</span></span><span>${new Date(e.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div><div class="tl-text">${U.sanitize(e.text)}</div><div class="tl-result ${y ? 'yes' : 'no'}">${e.outcome} · ${r.name}</div>${e.journal ? `<div class="tl-journal"><span class="j-name">📔 ${U.sanitize(e.journal.name)}</span>${U.sanitize(e.journal.text)}</div>` : ''}</div></div>` });
+          h += `</div>`;
+        } else if (tab === 'universes')
+        {
+          h += `<div class="world-sec"><div class="world-block"><h4>🌌 UNIVERSES</h4>`;
+          Object.entries(S.w.universes).forEach(([ n, u ]) => { h += `<div class="faction-row"><div class="f-dot" style="background:${u.color}"></div><div class="f-name">${u.name} <span class="utag ${u.cls}">${u.tag}</span><div style="font-size:10px;color:var(--tx3);font-weight:400">${u.desc}</div></div><div style="font-size:10px;color:var(--tx2)">Stability ${u.stability}%</div></div>` });
+          h += `</div></div>`;
+        } else if (tab === 'nations')
+        {
+          h += `<div class="world-sec"><div class="world-block"><h4>🏛️ NATIONS</h4>`;
+          Object.entries(S.w.nations).forEach(([ n, v ]) => { const st = v.power > 70 ? 'dominant' : v.power > 40 ? '' : v.power > 20 ? 'weakened' : 'critical'; const sl = v.power > 70 ? 'DOMINANT' : v.power > 40 ? '' : v.power > 20 ? 'WEAKENED' : 'CRITICAL'; h += `<div class="faction-row"><div class="f-dot" style="background:${v.color}"></div><div class="f-name">${v.name}<div style="font-size:10px;color:var(--tx3);font-weight:400">${v.gov} · ${RACES[ v.race ].name}</div></div><div class="f-bar"><div class="f-fill" style="width:${v.power}%;background:${v.color}"></div></div><div class="f-val">${v.power}</div>${sl ? `<div class="f-status ${st}">${sl}</div>` : ''}</div>` });
+          h += `</div></div>`;
+        } else if (tab === 'threads')
+        {
+          h += `<div class="sec-title" style="padding:16px 16px 8px">🧵 FATE THREADS</div>`;
+          S.w.fateThreads.forEach(t => { const pct = Math.round(t.progress / t.total * 100); h += `<div style="margin:0 16px 10px;padding:14px;background:var(--bg3);border:1px solid var(--brd);border-left:3px solid var(--gold);border-radius:var(--r)"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-size:13px;font-weight:700;color:var(--gold)">🧵 ${U.sanitize(t.name)}</div><div style="font-size:10px;font-weight:700;color:var(--tx2)">${t.progress}/${t.total}</div></div><div style="font-size:11px;color:var(--tx2);line-height:1.5;margin-bottom:8px;font-style:italic">${U.sanitize(t.desc)}</div><div style="height:4px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--gold)"></div></div></div>` });
+        }
+        document.getElementById('v-story').innerHTML = h;
+      },
+      renderView() {
+        if (S._view === 'markets') this.renderMarkets();
+        else if (S._view === 'detail') this.renderDetail();
+        else if (S._view === 'earn') this.renderEarn();
+        else if (S._view === 'portfolio') this.renderPortfolio();
+        else if (S._view === 'story') this.renderStory();
+        else if (S._view === 'history') this.renderHistory();
+        else if (S._view === 'leaders') this.renderLeaders();
+      },
+      showInterstitial(cb) {
+        const el = document.getElementById('interstitial'); const ads = [ { t: '🎮 Realm of Legends', d: 'Epic fantasy RPG. 10M+ players.' }, { t: '🎬 Multiverse Wars', d: 'The hit series. Stream now.' }, { t: '🧠 Brilliant', d: 'Master logic & science.' } ];
+        const ad = U.rc(ads);
+        el.innerHTML = `<div class="int-label">ADVERTISEMENT</div><div class="int-content"><div class="int-title">${ad.t}</div><div class="int-desc">${ad.d}</div></div><div class="int-skip" id="intSkip">Skip in 3s</div>`;
+        el.classList.add('show'); Ads.mark();
+        let t = 3; const iv = setInterval(() => { t--; const sk = document.getElementById('intSkip'); if (!sk) { clearInterval(iv); return } if (t > 0) sk.textContent = `Skip in ${t}s`; else { clearInterval(iv); sk.textContent = 'Tap to continue'; sk.style.cursor = 'pointer'; sk.onclick = () => { el.classList.remove('show'); if (cb) cb() } } }, 1000);
+      },
+      showResolution(won, amt, title, sponsored) {
+        const el = document.getElementById('resOverlay'); const showLucky = won && Ads.canShow();
+        el.innerHTML = `<div class="res-bg ${won ? 'win' : 'lose'}"></div><div class="res-card"><div class="res-icon">${won ? '🎉' : '💔'}</div><div class="res-title" style="color:${won ? 'var(--yes)' : 'var(--no)'}">${won ? 'YOU WON!' : 'YOU LOST'}</div>${sponsored ? '<div style="font-size:11px;color:var(--gold);margin-bottom:8px">⚡ 2× SPONSORED PAYOUT</div>' : ''}<div class="res-amt" style="color:${won ? 'var(--yes)' : 'var(--no)'}">${won ? '+' : ''}${U.fmt(amt)}</div><div class="res-mkt">${U.sanitize(title)}</div>${showLucky ? `<button class="gold" onclick="App.openLuckyDraw()">🎰 Lucky Draw · Watch Ad · Earn More</button>` : ''}<button onclick="document.getElementById('resOverlay').classList.remove('show')">Continue</button></div>`;
+        el.classList.add('show');
+      },
+      openModal(h) { document.getElementById('modalC').innerHTML = h; document.getElementById('modalBg').classList.add('open') },
+      closeModal() { document.getElementById('modalBg').classList.remove('open') }
+    };
+
+    // ============================================================
+    // APP
+    // ============================================================
+    const App = {
+      init() {
+        load();
+        document.querySelectorAll('.btab').forEach(t => t.addEventListener('click', () => this.nav(t.dataset.v)));
+        UI.renderBal(); UI.renderTicker(); UI.renderView(); E.start();
+        UI.addAct('🌌 Welcome to <b>WagerTale v12</b> — 100% free to play');
+        UI.addAct(`💰 Starting chips: ${U.fmt(C.BAL)} (earned, not bought)`);
+        if (Ads._streak > 1) UI.addAct(`🔥 Daily streak: ${Ads._streak} days · +${Ads.getStreakBonus()}% bonus`);
+        document.addEventListener('visibilitychange', () => { if (document.hidden) E.stop(); else E.start() });
+        window.addEventListener('beforeunload', () => { E.stop(); save() });
+      },
+      nav(v) {
+        S._view = v;
+        document.querySelectorAll('.view').forEach(e => e.classList.remove('active'));
+        document.querySelectorAll('.btab').forEach(e => e.classList.remove('active'));
+        document.getElementById('v-' + v).classList.add('active');
+        document.querySelector(`.btab[data-v="${v}"]`).classList.add('active');
+        UI.closeSlip(); UI.renderView();
+      },
+      setCat(c) { S._cat = c; UI.renderMarkets() },
+      setSTab(t) { S._storyTab = t; UI.renderStory() },
+      onSearch(v) { S._search = v; UI.renderMarkets() },
+      openMkt(id) { UI.openMkt(id) },
+      toggleStar(id) { const i = S.d.watchlist.indexOf(id); if (i >= 0) S.d.watchlist.splice(i, 1); else S.d.watchlist.push(id); save(); UI.renderMarkets() },
+      selSide(s) { S._selSide = s; UI.renderDetail() },
+      updateAmt(v) { S._betAmt = Math.max(1, parseFloat(v) || 0); UI.renderSlip() },
+      setAmt(v) { S._betAmt = v; UI.renderSlip() },
+      closeSlip() { UI.closeSlip() },
+      doBuy() {
+        const m = S._selMkt; if (!m || !S._selSide) return;
+        if (S._betAmt > S.d.balance) { UI.closeSlip(); UI.showToast('⚠️ Not enough chips — tap ▶ to earn more', 'lose'); setTimeout(() => this.openEarn(), 800); return }
+        const pos = E.buy(m, S._selSide, S._betAmt);
+        if (pos) { UI.closeSlip(); S._selSide = null; UI.renderDetail(); UI.showUndoToast(pos) }
+      },
+      undoBet() {
+        if (!S._lastBet) return;
+        const p = S.d.positions.find(x => x.id === S._lastBet.id);
+        if (p && p.status === 'open') { S.d.balance += p.cost; const idx = S.d.positions.indexOf(p); if (idx >= 0) S.d.positions.splice(idx, 1); const hidx = S.d.betHistory.findIndex(h => h.posId === p.id); if (hidx >= 0) S.d.betHistory.splice(hidx, 1); UI.showToast('Bet undone', 'win'); UI.addAct(`↩️ Bet undone · +${U.fmt(p.cost)}`); save() }
+        document.getElementById('undoToast').classList.remove('show'); clearInterval(S._undoTimer); S._lastBet = null;
+        if (S._view === 'detail') UI.renderDetail(); else if (S._view === 'portfolio') UI.renderPortfolio();
+      },
+      cashout(id) { E.cashout(id); UI.renderPortfolio() },
+      sellPos(id) {
+        const p = S.d.positions.find(x => x.id === id); if (!p) return; const m = S.d.markets.find(x => x.id === p.mktId); if (!m) return;
+        const cp = p.side === 'YES' ? m.yesPrice : (100 - m.yesPrice); const val = p.contracts * (cp / 100); const pl = val - p.cost;
+        UI.openModal(`<h3>Sell Position</h3><p>${U.sanitize(m.title)}</p><div style="text-align:left;margin:12px 0"><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--brd)"><span style="color:var(--tx2)">Side</span><span>${p.side}</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--brd)"><span style="color:var(--tx2)">Value</span><span>${U.fmt(val)}</span></div><div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:var(--tx2)">P&L</span><span style="color:${pl >= 0 ? 'var(--yes)' : 'var(--no)'}">${pl >= 0 ? '+' : ''}${U.fmt(pl)}</span></div></div><button onclick="E.sell('${id}');UI.closeModal();UI.renderPortfolio()">Confirm Sell</button><button class="secondary" onclick="UI.closeModal()">Cancel</button>`);
+      },
+      setAlert(mktId) {
+        const m = S.d.markets.find(x => x.id === mktId); if (!m) return;
+        UI.openModal(`<h3>🔔 Set Price Alert</h3><p>Get notified when price hits your target.</p><div style="display:flex;gap:8px;margin:12px 0"><button class="qa" style="flex:1" onclick="S._alertCond='above';this.style.background='var(--yes)';this.style.color='#000'">Above</button><button class="qa" style="flex:1" onclick="S._alertCond='below';this.style.background='var(--no)';this.style.color='#fff'">Below</button></div><div style="margin:12px 0"><input type="number" id="alertTarget" value="${m.yesPrice}" min="1" max="99" style="width:100%;padding:12px;background:var(--bg);border:1px solid var(--brd);border-radius:var(--r);color:var(--tx);font-size:16px;text-align:center;font-weight:700"></div><button onclick="App._confirmAlert('${mktId}')">Set Alert</button><button class="secondary" onclick="UI.closeModal()">Cancel</button>`);
+      },
+      _confirmAlert(mktId) {
+        const target = parseInt(document.getElementById('alertTarget').value);
+        if (!target || target < 1 || target > 99) return;
+        S.d.alerts.push({ mktId, cond: S._alertCond, target, message: `${S._alertCond === 'above' ? 'Above' : 'Below'} ${target}¢` });
+        UI.showToast(`🔔 Alert set`, 'ach'); UI.addAct(`🔔 Alert set`); UI.closeModal(); save();
+      },
+      openEarn() { this.nav('earn') },
+      watchMethod(id) {
+        const method = EARN_METHODS.find(m => m.id === id); if (!method) return;
+        const streakBonus = Ads.getStreakBonus();
+        const reward = typeof method.reward === 'number' ? Math.round(method.reward * (1 + streakBonus / 100)) : null;
+        if (id === 'sim') this._runAd(method, 5, reward || 25, 'Narrative Simulation');
+        else if (id === 'video') this._runAd(method, 30, reward || 50, 'Video Ad');
+        else if (id === 'survey') this._runAd(method, 20, reward || 75, 'Quick Survey');
+        else if (id === 'wheel') this._runAd(method, 10, null, 'Bonus Wheel', () => this.openWheel(reward || 50));
+        else if (id === 'playable') this._showPlayable(reward || 100);
+        else if (id === 'lucky') this._runAd(method, 10, null, 'Lucky Draw', () => this.openLuckyDraw());
+        else if (id === 'premium') this._runAd(method, 45, reward || 150, 'Premium Offer');
+      },
+      _runAd(method, duration, reward, label, onComplete) {
+        const ch = U.rc(E.alive()); const u = UNIVERSES[ ch.universe ];
+        const preview = `${ch.name} navigates the treacherous landscape of ${u.name}. Neon lights flicker across ancient stone as a dimensional rift crackles overhead. A choice must be made...`;
+        UI.openModal(`<h3>${method.icon} ${label}</h3><div class="earn-notice">💡 <b>Free to play:</b> Watch this ${duration}s ${label.toLowerCase()} to earn chips. No purchase necessary.</div><div class="ad-preview">${preview}</div>${reward ? `<div class="reward-preview">🎁 Reward: +${U.fmt(reward)}${streakBonus > 0 ? ` <span style="font-size:11px;color:var(--gold)">(+$${Math.round(reward * streakBonus / 100)} streak)</span>` : ''}</div>` : ''}<div class="countdown" id="adCD">${duration}</div><button id="adBtn" disabled>Playing ${label.toLowerCase()}...</button>`);
+        let t = duration; Ads.mark();
+        const iv = setInterval(() => { t--; const el = document.getElementById('adCD'); const btn = document.getElementById('adBtn'); if (!el) { clearInterval(iv); return } if (t > 0) el.textContent = t; else { clearInterval(iv); el.textContent = '✓'; if (reward) { S.d.balance += reward; S.d.totalEarned = (S.d.totalEarned || C.BAL) + reward; S.d.earnSources[ method.id ] = (S.d.earnSources[ method.id ] || 0) + 1; UI.renderBal(); UI.addAct(`💰 Earned <b>${U.fmt(reward)}</b> from ${label}`) } btn.disabled = false; btn.textContent = reward ? `Collect ${U.fmt(reward)}` : 'Continue'; btn.onclick = () => { UI.closeModal(); if (reward) UI.showToast(`+${U.fmt(reward)}`, 'win'); if (onComplete) setTimeout(onComplete, 300); else if (S._view === 'earn') UI.renderEarn() } } }, 1000);
+      },
+      _showPlayable(reward) {
+        const el = document.getElementById('playable');
+        el.innerHTML = `<div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--tx3);margin-bottom:8px">PLAYABLE AD · EARN ${U.fmt(reward)}</div><div style="font-size:14px;font-weight:700;margin-bottom:4px">🎮 Tap the Targets!</div><div style="font-size:11px;color:var(--tx2);margin-bottom:4px">Hit 10 targets in 15 seconds</div><div style="font-size:10px;color:var(--yes);margin-bottom:8px">💡 Free reward · No purchase necessary</div><div class="play-score" id="playScore">0 / 10</div><div class="play-timer" id="playTimer">15s</div><div class="play-area" id="playArea"></div><button id="playBtn" onclick="App._startPlayable(${reward})">Start</button>`;
+        el.classList.add('show'); Ads.mark();
+      },
+      _startPlayable(reward) {
+        const area = document.getElementById('playArea'); let score = 0, time = 15;
+        document.getElementById('playBtn').style.display = 'none';
+        const spawnTarget = () => { const t = document.createElement('div'); t.className = 'play-target'; t.style.left = U.ri(10, 220) + 'px'; t.style.top = U.ri(10, 300) + 'px'; t.textContent = U.rc([ '💎', '⭐', '🎯', '💰', '🔥' ]); t.onclick = () => { score++; document.getElementById('playScore').textContent = `${score} / 10`; area.removeChild(t); if (score >= 10) endGame(true) }; area.appendChild(t); setTimeout(() => { if (t.parentNode) area.removeChild(t) }, 2000) };
+        const spawner = setInterval(spawnTarget, 700);
+        const timer = setInterval(() => { time--; const el = document.getElementById('playTimer'); if (!el) { clearInterval(timer); clearInterval(spawner); return } el.textContent = time + 's'; if (time <= 0) { clearInterval(timer); clearInterval(spawner); endGame(score >= 10) } }, 1000);
+        const endGame = (won) => { clearInterval(spawner); clearInterval(timer); area.innerHTML = ''; if (won) { S.d.balance += reward; S.d.totalEarned = (S.d.totalEarned || C.BAL) + reward; UI.renderBal(); UI.addAct(`💰 Earned <b>${U.fmt(reward)}</b> from playable ad`); area.innerHTML = `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column"><div style="font-size:48px">🎉</div><div style="font-size:20px;font-weight:800;color:var(--gold);margin-top:8px">+${U.fmt(reward)}</div></div>` } else { area.innerHTML = `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column"><div style="font-size:48px">😢</div><div style="font-size:14px;color:var(--tx2);margin-top:8px">Try again next time!</div></div>` } setTimeout(() => { document.getElementById('playable').classList.remove('show'); UI.showToast(won ? `+${U.fmt(reward)}` : 'Nice try!', 'win'); if (S._view === 'earn') UI.renderEarn() }, 2000) };
+      },
+      openWheel(baseReward) {
+        const segs = [ 2, 3, 5, 2, 10, 3, 2, 5 ]; const colors = [ 'var(--yes)', 'var(--acc)', 'var(--gold)', 'var(--yes)', 'var(--purple)', 'var(--acc)', 'var(--yes)', 'var(--gold)' ];
+        let grad = 'conic-gradient('; let acc = 0; segs.forEach((s, i) => { const start = acc; acc += 360 / segs.length; grad += `${colors[ i ]} ${start}deg ${acc}deg,` }); grad = grad.slice(0, -1) + ')';
+        UI.openModal(`<h3>🎡 Bonus Wheel</h3><div class="earn-notice">💡 <b>Free reward:</b> Spin for a 2×–10× multiplier on ${U.fmt(baseReward)}. No purchase necessary.</div><div class="wheel-wrap"><div class="wheel-pointer"></div><div class="wheel" id="wheel" style="background:${grad}"></div><div class="wheel-center">🎯</div></div><div class="wheel-result" id="wheelRes" style="display:none"></div><button id="wheelBtn" onclick="App._spinWheel(${baseReward})">Spin</button><button class="secondary" onclick="UI.closeModal()">Close</button>`);
+      },
+      _spinWheel(baseReward) {
+        const segs = [ 2, 3, 5, 2, 10, 3, 2, 5 ]; const wheel = document.getElementById('wheel'); const btn = document.getElementById('wheelBtn');
+        btn.disabled = true; btn.textContent = 'Spinning...';
+        const winIdx = U.ri(0, segs.length - 1); const segAngle = 360 / segs.length; const targetAngle = 360 * 5 + (360 - winIdx * segAngle - segAngle / 2);
+        wheel.style.transform = `rotate(${targetAngle}deg)`;
+        setTimeout(() => { const mult = segs[ winIdx ]; const reward = baseReward * mult; S.d.balance += reward; S.d.totalEarned = (S.d.totalEarned || C.BAL) + reward; UI.renderBal(); const res = document.getElementById('wheelRes'); res.style.display = 'block'; res.style.color = 'var(--gold)'; res.textContent = `🎉 ${mult}× · +${U.fmt(reward)}`; UI.addAct(`🎡 Wheel: <b>${mult}× = ${U.fmt(reward)}</b>`); btn.textContent = `Collect ${U.fmt(reward)}`; btn.disabled = false; btn.onclick = () => { UI.closeModal(); UI.showToast(`+${U.fmt(reward)}`, 'win'); if (S._view === 'earn') UI.renderEarn() } }, 4200);
+      },
+      openLuckyDraw() {
+        const prizes = [ 10, 25, 50, 100, 25, 50, 10, 200, 50 ]; const shuffled = [ ...prizes ].sort(() => Math.random() - .5);
+        let h = `<h3>🎰 Lucky Card Draw</h3><div class="earn-notice">💡 <b>Free reward:</b> Pick a card to reveal your prize ($10–$200). No purchase necessary.</div><div class="lucky-grid">`;
+        for (let i = 0; i < 9; i++)h += `<div class="lucky-card" onclick="App._flipLucky(this,${shuffled[ i ]})"><span style="font-size:24px">?</span></div>`;
+        h += `</div><button class="secondary" onclick="UI.closeModal()">Skip</button>`;
+        UI.openModal(h);
+      },
+      _flipLucky(el, prize) {
+        if (el.classList.contains('flipped')) return;
+        document.querySelectorAll('.lucky-card').forEach(c => { c.style.pointerEvents = 'none'; if (!c.classList.contains('flipped')) c.innerHTML = `<span class="lc-val">${U.rc([ 10, 25, 50 ])}</span>` });
+        el.classList.add('flipped'); el.innerHTML = `<span class="lc-val">${prize}</span>`;
+        S.d.balance += prize; S.d.totalEarned = (S.d.totalEarned || C.BAL) + prize; UI.renderBal(); UI.addAct(`🎰 Lucky Draw: <b>+${U.fmt(prize)}</b>`);
+        setTimeout(() => { UI.closeModal(); UI.showToast(`+${U.fmt(prize)}`, 'win'); if (S._view === 'earn') UI.renderEarn() }, 1500);
+      },
+      openSettings() {
+        UI.openModal(`<h3>⚙️ Settings</h3><div style="background:var(--yes2);border:1px solid rgba(0,210,106,.3);border-radius:var(--r);padding:10px;margin:12px 0;font-size:11px;color:var(--yes);line-height:1.5;text-align:left"><b>💡 Free to Play Notice:</b><br>WagerTale is 100% free. All chips are earned by watching ads and completing offers. <b>No real money is ever exchanged.</b> Chips cannot be purchased with real currency, cashed out, or converted to real value. This app is for entertainment only.</div><div style="text-align:left;padding:10px 0;font-size:12px;color:var(--tx2);line-height:1.6"><div style="display:flex;justify-content:space-between;padding:4px 0"><span>Version</span><b>${C.VER}</b></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span>Ads watched</span><b>${Ads._count}</b></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span>Day streak</span><b>${Ads._streak} 🔥</b></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span>Total chips earned</span><b>${U.fmt(S.d.totalEarned || C.BAL)}</b></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span>Real money spent</span><b style="color:var(--yes)">$0.00</b></div></div><button class="danger" onclick="if(confirm('Reset all data?')){localStorage.removeItem('${C.KEY}');location.reload()}">Reset Data</button><button class="secondary" onclick="UI.closeModal()">Close</button>`);
+      },
+      closeModal() { UI.closeModal() }
+    };
+    document.addEventListener('DOMContentLoaded', () => App.init());
+  </script>
+</body>
+
+</html>
